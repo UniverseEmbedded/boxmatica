@@ -328,7 +328,8 @@ public class WidgetSchematicBrowser extends WidgetFileBrowserBase{
     public boolean accept(Path pathName) {
       String name=pathName.getFileName().toString();
 
-      return name.endsWith(".boxmatic")||
+      return name.endsWith(".boxmatic")||name.endsWith(".bmc")||
+        name.endsWith(".litematic")||
         name.endsWith(".schem")||
         name.endsWith(".schematic")||
         name.endsWith(".nbt");
