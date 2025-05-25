@@ -8,8 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(WallMountedBlock.class)
-public interface IMixinWallMountedBlock
-{
-    @Invoker("canPlaceAt")
-    boolean litematica_invokeCanPlaceAt(BlockState state, WorldView world, BlockPos pos);
+public interface IMixinWallMountedBlock{
+  @Invoker("canPlaceAt")
+  boolean litematica_invokeCanPlaceAt(BlockState state,WorldView world,BlockPos pos);
 }

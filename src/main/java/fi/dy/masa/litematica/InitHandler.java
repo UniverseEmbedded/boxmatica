@@ -16,40 +16,37 @@ import fi.dy.masa.litematica.gui.GuiConfigs;
 import fi.dy.masa.litematica.render.infohud.StatusInfoRenderer;
 import fi.dy.masa.litematica.scheduler.ClientTickHandler;
 
-public class InitHandler implements IInitializationHandler
-{
-    @Override
-    public void registerModHandlers()
-    {
-        ConfigManager.getInstance().registerConfigHandler(Reference.MOD_ID, new Configs());
-        Registry.CONFIG_SCREEN.registerConfigScreenFactory(
-                new ModInfo(Reference.MOD_ID, Reference.MOD_NAME, GuiConfigs::new)
-        );
+public class InitHandler implements IInitializationHandler{
+  @Override
+  public void registerModHandlers() {
+    ConfigManager.getInstance().registerConfigHandler(Reference.MOD_ID,new Configs());
+    Registry.CONFIG_SCREEN.registerConfigScreenFactory(
+      new ModInfo(Reference.MOD_ID,Reference.MOD_NAME,GuiConfigs::new));
 
-        EntitiesDataStorage.getInstance().onGameInit();
+    EntitiesDataStorage.getInstance().onGameInit();
 
-        InputEventHandler.getKeybindManager().registerKeybindProvider(InputHandler.getInstance());
-        InputEventHandler.getInputManager().registerKeyboardInputHandler(InputHandler.getInstance());
-        InputEventHandler.getInputManager().registerMouseInputHandler(InputHandler.getInstance());
+    InputEventHandler.getKeybindManager().registerKeybindProvider(InputHandler.getInstance());
+    InputEventHandler.getInputManager().registerKeyboardInputHandler(InputHandler.getInstance());
+    InputEventHandler.getInputManager().registerMouseInputHandler(InputHandler.getInstance());
 
-        IRenderer renderer = new RenderHandler();
-        RenderEventHandler.getInstance().registerGameOverlayRenderer(renderer);
-        RenderEventHandler.getInstance().registerWorldPreWeatherRenderer(renderer);
-        RenderEventHandler.getInstance().registerWorldLastRenderer(renderer);
+    IRenderer renderer=new RenderHandler();
+    RenderEventHandler.getInstance().registerGameOverlayRenderer(renderer);
+    RenderEventHandler.getInstance().registerWorldPreWeatherRenderer(renderer);
+    RenderEventHandler.getInstance().registerWorldLastRenderer(renderer);
 
-        ServerHandler.getInstance().registerServerHandler(new ServerListener());
+    ServerHandler.getInstance().registerServerHandler(new ServerListener());
 
-        TickHandler.getInstance().registerClientTickHandler(new ClientTickHandler());
-        TickHandler.getInstance().registerClientTickHandler(EntitiesDataStorage.getInstance());
+    TickHandler.getInstance().registerClientTickHandler(new ClientTickHandler());
+    TickHandler.getInstance().registerClientTickHandler(EntitiesDataStorage.getInstance());
 
-        WorldLoadListener listener = new WorldLoadListener();
-        WorldLoadHandler.getInstance().registerWorldLoadPreHandler(listener);
-        WorldLoadHandler.getInstance().registerWorldLoadPostHandler(listener);
+    WorldLoadListener listener=new WorldLoadListener();
+    WorldLoadHandler.getInstance().registerWorldLoadPreHandler(listener);
+    WorldLoadHandler.getInstance().registerWorldLoadPostHandler(listener);
 
-        KeyCallbacks.init(MinecraftClient.getInstance());
-        StatusInfoRenderer.init();
+    KeyCallbacks.init(MinecraftClient.getInstance());
+    StatusInfoRenderer.init();
 
-        DataManager.getAreaSelectionsBaseDirectory();
-        DataManager.getSchematicsBaseDirectory();
-    }
+    DataManager.getAreaSelectionsBaseDirectory();
+    DataManager.getSchematicsBaseDirectory();
+  }
 }

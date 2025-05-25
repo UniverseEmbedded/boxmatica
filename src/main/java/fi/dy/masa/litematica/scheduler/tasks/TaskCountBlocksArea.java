@@ -5,19 +5,16 @@ import net.minecraft.util.math.BlockPos;
 import fi.dy.masa.litematica.materials.IMaterialList;
 import fi.dy.masa.litematica.selection.AreaSelection;
 
-public class TaskCountBlocksArea extends TaskCountBlocksBase
-{
-    public TaskCountBlocksArea(AreaSelection selection, IMaterialList materialList)
-    {
-        super(materialList, "litematica.gui.label.task_name.area_analyzer");
+public class TaskCountBlocksArea extends TaskCountBlocksBase{
+  public TaskCountBlocksArea(AreaSelection selection,IMaterialList materialList) {
+    super(materialList,"litematica.gui.label.task_name.area_analyzer");
 
-        this.addPerChunkBoxes(selection.getAllSubRegionBoxes());
-    }
+    this.addPerChunkBoxes(selection.getAllSubRegionBoxes());
+  }
 
-    @Override
-    protected void countAtPosition(BlockPos pos)
-    {
-        BlockState stateClient = this.clientWorld.getBlockState(pos);
-        this.countsTotal.addTo(stateClient, 1);
-    }
+  @Override
+  protected void countAtPosition(BlockPos pos) {
+    BlockState stateClient=this.clientWorld.getBlockState(pos);
+    this.countsTotal.addTo(stateClient,1);
+  }
 }

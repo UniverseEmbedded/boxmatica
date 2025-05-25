@@ -9,11 +9,10 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 
 @Mixin(Entity.class)
-public interface IMixinEntity
-{
-    @Accessor("world")
-    void litematica_setWorld(World world);
+public interface IMixinEntity{
+  @Accessor("world")
+  void litematica_setWorld(World world);
 
-    @Invoker("readCustomDataFromNbt")
-    void litematica_readCustomDataFromNbt(NbtCompound nbt);
+  @Invoker("readCustomDataFromNbt")
+  void litematica_readCustomDataFromNbt(NbtCompound nbt);
 }

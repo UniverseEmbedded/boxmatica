@@ -6,21 +6,17 @@ import net.fabricmc.api.ModInitializer;
 import fi.dy.masa.malilib.event.InitializationHandler;
 import fi.dy.masa.litematica.config.Configs;
 
-public class Litematica implements ModInitializer
-{
-    public static final Logger LOGGER = LogManager.getLogger(Reference.MOD_ID);
+public class Litematica implements ModInitializer{
+  public static final Logger LOGGER=LogManager.getLogger(Reference.MOD_ID);
 
-    @Override
-    public void onInitialize()
-    {
-        InitializationHandler.getInstance().registerInitializationHandler(new InitHandler());
-    }
+  @Override
+  public void onInitialize() {
+    InitializationHandler.getInstance().registerInitializationHandler(new InitHandler());
+  }
 
-    public static void debugLog(String msg, Object... args)
-    {
-        if (Configs.Generic.DEBUG_LOGGING.getBooleanValue())
-        {
-            Litematica.LOGGER.info(msg, args);
-        }
+  public static void debugLog(String msg,Object... args) {
+    if(Configs.Generic.DEBUG_LOGGING.getBooleanValue()) {
+      Litematica.LOGGER.info(msg,args);
     }
+  }
 }

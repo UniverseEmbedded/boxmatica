@@ -6,8 +6,7 @@ import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket;
 import net.minecraft.util.math.ChunkSectionPos;
 
 @Mixin(ChunkDeltaUpdateS2CPacket.class)
-public interface IMixinChunkDeltaUpdateS2CPacket
-{
-    @Accessor("sectionPos")
-    ChunkSectionPos litematica_getSection();
+public interface IMixinChunkDeltaUpdateS2CPacket{
+  @Accessor("sectionPos")
+  ChunkSectionPos litematica_getSection();
 }

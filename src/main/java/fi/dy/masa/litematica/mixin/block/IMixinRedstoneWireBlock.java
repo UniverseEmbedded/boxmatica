@@ -8,8 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 
 @Mixin(RedstoneWireBlock.class)
-public interface IMixinRedstoneWireBlock
-{
-    @Invoker("getPlacementState")
-    BlockState litematica_GetPlacementState(BlockView world, BlockState state, BlockPos pos);
+public interface IMixinRedstoneWireBlock{
+  @Invoker("getPlacementState")
+  BlockState litematica_GetPlacementState(BlockView world,BlockState state,BlockPos pos);
 }

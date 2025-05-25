@@ -14,17 +14,14 @@ import fi.dy.masa.litematica.config.Configs;
 import fi.dy.masa.litematica.util.BlockUtils;
 
 @Mixin(ChestBlock.class)
-public class MixinChestBlock
-{
-    @Inject(method = "mirror", at = @At("HEAD"), cancellable = true)
-    private void litematica_fixChestMirror(BlockState state, BlockMirror mirror, CallbackInfoReturnable<BlockState> cir)
-    {
-        ChestType type = state.get(ChestBlock.CHEST_TYPE);
+public class MixinChestBlock{
+  @Inject(method="mirror",at=@At("HEAD"),cancellable=true)
+  private void litematica_fixChestMirror(BlockState state,BlockMirror mirror,CallbackInfoReturnable<BlockState> cir) {
+    ChestType type=state.get(ChestBlock.CHEST_TYPE);
 
-        if (Configs.Generic.FIX_CHEST_MIRROR.getBooleanValue() && type != ChestType.SINGLE)
-        {
-            state = BlockUtils.fixMirrorDoubleChest(state, mirror, type);
-            cir.setReturnValue(state);
-        }
+    if(Configs.Generic.FIX_CHEST_MIRROR.getBooleanValue()&&type!=ChestType.SINGLE) {
+      state=BlockUtils.fixMirrorDoubleChest(state,mirror,type);
+      cir.setReturnValue(state);
     }
+  }
 }

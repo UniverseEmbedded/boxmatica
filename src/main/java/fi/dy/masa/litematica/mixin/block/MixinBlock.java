@@ -12,18 +12,14 @@ import net.minecraft.world.World;
 import fi.dy.masa.litematica.util.WorldUtils;
 
 @Mixin(Block.class)
-public class MixinBlock
-{
-    @Inject(method = "dropStack(Lnet/minecraft/world/World;Ljava/util/function/Supplier;Lnet/minecraft/item/ItemStack;)V",
-            at = @At("HEAD"), cancellable = true)
-    private static void litematica_preventItemDrops(World world,
-                                                    Supplier<ItemEntity> itemEntitySupplier,
-                                                    ItemStack stack,
-                                                    CallbackInfo ci)
-    {
-        if (WorldUtils.shouldPreventBlockUpdates(world))
-        {
-            ci.cancel();
-        }
+public class MixinBlock{
+  @Inject(method="dropStack(Lnet/minecraft/world/World;Ljava/util/function/Supplier;Lnet/minecraft/item/ItemStack;)V",at=@At("HEAD"),cancellable=true)
+  private static void litematica_preventItemDrops(World world,
+    Supplier<ItemEntity> itemEntitySupplier,
+    ItemStack stack,
+    CallbackInfo ci) {
+    if(WorldUtils.shouldPreventBlockUpdates(world)) {
+      ci.cancel();
     }
+  }
 }

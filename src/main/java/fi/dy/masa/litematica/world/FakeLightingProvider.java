@@ -14,101 +14,87 @@ import net.minecraft.world.chunk.light.LightingProvider;
 
 import fi.dy.masa.litematica.config.Configs;
 
-public class FakeLightingProvider extends LightingProvider
-{
-    private final FakeLightingView lightingView;
-    private static final ChunkNibbleArray chunkNibbleArray = new ChunkNibbleArray(15);
+public class FakeLightingProvider extends LightingProvider{
+  private final FakeLightingView lightingView;
+  private static final ChunkNibbleArray chunkNibbleArray=new ChunkNibbleArray(15);
 
-    public FakeLightingProvider(ChunkProvider chunkProvider)
-    {
-        super(chunkProvider, false, false);
+  public FakeLightingProvider(ChunkProvider chunkProvider) {
+    super(chunkProvider,false,false);
 
-        this.lightingView = new FakeLightingView();
+    this.lightingView=new FakeLightingView();
+  }
+
+  @Override
+  public ChunkLightingView get(LightType type) {
+    return this.lightingView;
+  }
+
+  @Override
+  public int getLight(BlockPos pos,int ambientDarkness) {
+    //return 15;
+    return Configs.Visuals.RENDER_FAKE_LIGHTING_LEVEL.getIntegerValue();
+  }
+
+  public static ChunkNibbleArray getChunkNibbleArray() {
+    return chunkNibbleArray;
+  }
+
+  @Override
+  public boolean isLightingEnabled(long sectionPos) {
+    return true;
+  }
+
+  @Override
+  public LightStorage.Status getStatus(LightType lightType,ChunkSectionPos pos) {
+    return LightStorage.Status.LIGHT_ONLY;
+  }
+
+  @Override
+  public String displaySectionLevel(LightType lightType,ChunkSectionPos pos) {
+    return Integer.toString(1);
+  }
+
+  public static class FakeLightingView implements ChunkLightingView{
+    @Nullable
+    @Override
+    public ChunkNibbleArray getLightSection(ChunkSectionPos pos) {
+      return FakeLightingProvider.chunkNibbleArray;
     }
 
     @Override
-    public ChunkLightingView get(LightType type)
-    {
-        return this.lightingView;
+    public int getLightLevel(BlockPos pos) {
+      //return 15;
+      return Configs.Visuals.RENDER_FAKE_LIGHTING_LEVEL.getIntegerValue();
     }
 
     @Override
-    public int getLight(BlockPos pos, int ambientDarkness)
-    {
-        //return 15;
-        return Configs.Visuals.RENDER_FAKE_LIGHTING_LEVEL.getIntegerValue();
-    }
-
-    public static ChunkNibbleArray getChunkNibbleArray() { return chunkNibbleArray; }
-
-    @Override
-    public boolean isLightingEnabled(long sectionPos)
-    {
-        return true;
+    public void checkBlock(BlockPos pos) {
+      // Checked
     }
 
     @Override
-    public LightStorage.Status getStatus(LightType lightType, ChunkSectionPos pos)
-    {
-        return LightStorage.Status.LIGHT_ONLY;
+    public void propagateLight(ChunkPos chunkPos) {
+      // Done
     }
 
     @Override
-    public String displaySectionLevel(LightType lightType, ChunkSectionPos pos)
-    {
-        return Integer.toString(1);
+    public boolean hasUpdates() {
+      return false;
     }
 
-    public static class FakeLightingView implements ChunkLightingView
-    {
-        @Nullable
-        @Override
-        public ChunkNibbleArray getLightSection(ChunkSectionPos pos)
-        {
-            return FakeLightingProvider.chunkNibbleArray;
-        }
-
-        @Override
-        public int getLightLevel(BlockPos pos)
-        {
-            //return 15;
-            return Configs.Visuals.RENDER_FAKE_LIGHTING_LEVEL.getIntegerValue();
-        }
-
-        @Override
-        public void checkBlock(BlockPos pos)
-        {
-            // Checked
-        }
-
-        @Override
-        public void propagateLight(ChunkPos chunkPos)
-        {
-            // Done
-        }
-
-        @Override
-        public boolean hasUpdates()
-        {
-            return false;
-        }
-
-        @Override
-        public int doLightUpdates()
-        {
-            return 0;
-        }
-
-        @Override
-        public void setSectionStatus(ChunkSectionPos pos, boolean notReady)
-        {
-            // NO-OP
-        }
-
-        @Override
-        public void setColumnEnabled(ChunkPos chunkPos, boolean bl)
-        {
-            // NO-OP
-        }
+    @Override
+    public int doLightUpdates() {
+      return 0;
     }
+
+    @Override
+    public void setSectionStatus(ChunkSectionPos pos,boolean notReady) {
+      // NO-OP
+    }
+
+    @Override
+    public void setColumnEnabled(ChunkPos chunkPos,boolean bl) {
+      // NO-OP
+    }
+  }
 }

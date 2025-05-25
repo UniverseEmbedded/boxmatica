@@ -19,154 +19,126 @@ import fi.dy.masa.litematica.scheduler.TaskTimer;
 import fi.dy.masa.litematica.util.PositionUtils;
 import fi.dy.masa.litematica.util.WorldUtils;
 
-public abstract class TaskBase implements ITask, IInfoHudRenderer
-{
-    protected final List<String> infoHudLines = new ArrayList<>();
-    protected final MinecraftClient mc;
-    protected String name = "";
-    private TaskTimer timer = new TaskTimer(1);
-    @Nullable private ICompletionListener completionListener;
-    protected boolean finished;
-    protected boolean printCompletionMessage = true;
+public abstract class TaskBase implements ITask,IInfoHudRenderer{
+  protected final List<String> infoHudLines=new ArrayList<>();
+  protected final MinecraftClient mc;
+  protected String name="";
+  private TaskTimer timer=new TaskTimer(1);
+  @Nullable
+  private ICompletionListener completionListener;
+  protected boolean finished;
+  protected boolean printCompletionMessage=true;
 
-    protected TaskBase()
-    {
-        this.mc = MinecraftClient.getInstance();
-    }
+  protected TaskBase() {
+    this.mc=MinecraftClient.getInstance();
+  }
 
-    @Override
-    public TaskTimer getTimer()
-    {
-        return this.timer;
-    }
+  @Override
+  public TaskTimer getTimer() {
+    return this.timer;
+  }
 
-    @Override
-    public String getDisplayName()
-    {
-        return this.name;
-    }
+  @Override
+  public String getDisplayName() {
+    return this.name;
+  }
 
-    @Override
-    public void createTimer(int interval)
-    {
-        this.timer = new TaskTimer(interval);
-    }
+  @Override
+  public void createTimer(int interval) {
+    this.timer=new TaskTimer(interval);
+  }
 
-    public void disableCompletionMessage()
-    {
-        this.printCompletionMessage = false;
-    }
+  public void disableCompletionMessage() {
+    this.printCompletionMessage=false;
+  }
 
-    public void setCompletionListener(@Nullable ICompletionListener listener)
-    {
-        this.completionListener = listener;
-    }
+  public void setCompletionListener(@Nullable ICompletionListener listener) {
+    this.completionListener=listener;
+  }
 
-    @Override
-    public boolean canExecute()
-    {
-        return this.isInWorld();
-    }
+  @Override
+  public boolean canExecute() {
+    return this.isInWorld();
+  }
 
-    @Override
-    public boolean shouldRemove()
-    {
-        return this.canExecute() == false;
-    }
+  @Override
+  public boolean shouldRemove() {
+    return this.canExecute()==false;
+  }
 
-    @Override
-    public void init()
-    {
-    }
+  @Override
+  public void init() {}
 
-    @Override
-    public void stop()
-    {
-        this.notifyListener();
-    }
+  @Override
+  public void stop() {
+    this.notifyListener();
+  }
 
-    protected boolean isInWorld()
-    {
-        return this.mc.world != null && this.mc.player != null;
-    }
+  protected boolean isInWorld() {
+    return this.mc.world!=null&&this.mc.player!=null;
+  }
 
-    protected void notifyListener()
-    {
-        if (this.completionListener != null)
-        {
-            this.mc.execute(() ->
-            {
-                if (this.finished)
-                {
-                    this.completionListener.onTaskCompleted();
-                }
-                else
-                {
-                    this.completionListener.onTaskAborted();
-                }
-            });
+  protected void notifyListener() {
+    if(this.completionListener!=null) {
+      this.mc.execute(()-> {
+        if(this.finished) {
+          this.completionListener.onTaskCompleted();
+        }else {
+          this.completionListener.onTaskAborted();
         }
+      });
+    }
+  }
+
+  protected boolean areSurroundingChunksLoaded(ChunkPos pos,ClientWorld world,int radius) {
+    if(radius<=0) {
+      return WorldUtils.isClientChunkLoaded(world,pos.x,pos.z);
     }
 
-    protected boolean areSurroundingChunksLoaded(ChunkPos pos, ClientWorld world, int radius)
-    {
-        if (radius <= 0)
-        {
-            return WorldUtils.isClientChunkLoaded(world, pos.x, pos.z);
+    int chunkX=pos.x;
+    int chunkZ=pos.z;
+
+    for(int cx=chunkX-radius;cx<=chunkX+radius;++cx) {
+      for(int cz=chunkZ-radius;cz<=chunkZ+radius;++cz) {
+        if(WorldUtils.isClientChunkLoaded(world,cx,cz)==false) {
+          return false;
         }
-
-        int chunkX = pos.x;
-        int chunkZ = pos.z;
-
-        for (int cx = chunkX - radius; cx <= chunkX + radius; ++cx)
-        {
-            for (int cz = chunkZ - radius; cz <= chunkZ + radius; ++cz)
-            {
-                if (WorldUtils.isClientChunkLoaded(world, cx, cz) == false)
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+      }
     }
 
-    protected void updateInfoHudLinesPendingChunks(Collection<ChunkPos> pendingChunks)
-    {
-        this.infoHudLines.clear();
+    return true;
+  }
 
-        if (pendingChunks.isEmpty() == false)
-        {
-            // TODO
-            List<ChunkPos> list = new ArrayList<>(pendingChunks);
-            PositionUtils.CHUNK_POS_COMPARATOR.setReferencePosition(BlockPos.ofFloored(this.mc.player.getPos()));
-            PositionUtils.CHUNK_POS_COMPARATOR.setClosestFirst(true);
-            list.sort(PositionUtils.CHUNK_POS_COMPARATOR);
+  protected void updateInfoHudLinesPendingChunks(Collection<ChunkPos> pendingChunks) {
+    this.infoHudLines.clear();
 
-            String pre = GuiBase.TXT_WHITE + GuiBase.TXT_BOLD;
-            String title = StringUtils.translate("litematica.gui.label.task.title.remaining_chunks", this.getDisplayName(), pendingChunks.size());
-            this.infoHudLines.add(String.format("%s%s%s", pre, title, GuiBase.TXT_RST));
+    if(pendingChunks.isEmpty()==false) {
+      // TODO
+      List<ChunkPos> list=new ArrayList<>(pendingChunks);
+      PositionUtils.CHUNK_POS_COMPARATOR.setReferencePosition(BlockPos.ofFloored(this.mc.player.getPos()));
+      PositionUtils.CHUNK_POS_COMPARATOR.setClosestFirst(true);
+      list.sort(PositionUtils.CHUNK_POS_COMPARATOR);
 
-            int maxLines = Math.min(list.size(), Configs.InfoOverlays.INFO_HUD_MAX_LINES.getIntegerValue());
+      String pre=GuiBase.TXT_WHITE+GuiBase.TXT_BOLD;
+      String title=StringUtils.translate("litematica.gui.label.task.title.remaining_chunks",this.getDisplayName(),pendingChunks.size());
+      this.infoHudLines.add(String.format("%s%s%s",pre,title,GuiBase.TXT_RST));
 
-            for (int i = 0; i < maxLines; ++i)
-            {
-                ChunkPos pos = list.get(i);
-                this.infoHudLines.add(String.format("cx: %5d, cz: %5d (x: %d, z: %d)", pos.x, pos.z, pos.x << 4, pos.z << 4));
-            }
-        }
+      int maxLines=Math.min(list.size(),Configs.InfoOverlays.INFO_HUD_MAX_LINES.getIntegerValue());
+
+      for(int i=0;i<maxLines;++i) {
+        ChunkPos pos=list.get(i);
+        this.infoHudLines.add(String.format("cx: %5d, cz: %5d (x: %d, z: %d)",pos.x,pos.z,pos.x<<4,pos.z<<4));
+      }
     }
+  }
 
-    @Override
-    public boolean getShouldRenderText(RenderPhase phase)
-    {
-        return phase == RenderPhase.POST;
-    }
+  @Override
+  public boolean getShouldRenderText(RenderPhase phase) {
+    return phase==RenderPhase.POST;
+  }
 
-    @Override
-    public List<String> getText(RenderPhase phase)
-    {
-        return this.infoHudLines;
-    }
+  @Override
+  public List<String> getText(RenderPhase phase) {
+    return this.infoHudLines;
+  }
 }

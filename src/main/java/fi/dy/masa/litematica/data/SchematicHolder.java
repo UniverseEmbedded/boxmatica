@@ -9,75 +9,60 @@ import javax.annotation.Nullable;
 import fi.dy.masa.litematica.schematic.LitematicaSchematic;
 import fi.dy.masa.litematica.util.FileType;
 
-public class SchematicHolder
-{
-    private static final SchematicHolder INSTANCE = new SchematicHolder();
-    private final List<LitematicaSchematic> schematics = new ArrayList<>();
+public class SchematicHolder{
+  private static final SchematicHolder INSTANCE=new SchematicHolder();
+  private final List<LitematicaSchematic> schematics=new ArrayList<>();
 
-    public static SchematicHolder getInstance()
-    {
-        return INSTANCE;
-    }
+  public static SchematicHolder getInstance() {
+    return INSTANCE;
+  }
 
-    public void clearLoadedSchematics()
-    {
-        this.schematics.clear();
-    }
+  public void clearLoadedSchematics() {
+    this.schematics.clear();
+  }
 
-    @Nullable
-    public LitematicaSchematic getOrLoad(Path file)
-    {
-        for (LitematicaSchematic schematic : this.schematics)
-        {
-            if (file.equals(schematic.getFile()))
-            {
-                return schematic;
-            }
-        }
-
-        FileType type = FileType.fromFile(file);
-        LitematicaSchematic schematic = LitematicaSchematic.createFromFile(file.getParent(), file.getFileName().toString(), type);
-
-        if (schematic != null)
-        {
-            this.schematics.add(schematic);
-        }
-
+  @Nullable
+  public LitematicaSchematic getOrLoad(Path file) {
+    for(LitematicaSchematic schematic:this.schematics) {
+      if(file.equals(schematic.getFile())) {
         return schematic;
+      }
     }
 
-    public void addSchematic(LitematicaSchematic schematic, boolean allowDuplicates)
-    {
-        if (allowDuplicates || this.schematics.contains(schematic) == false)
-        {
-            if (allowDuplicates == false && schematic.getFile() != null)
-            {
-                for (LitematicaSchematic tmp : this.schematics)
-                {
-                    if (schematic.getFile().equals(tmp.getFile()))
-                    {
-                        return;
-                    }
-                }
-            }
+    FileType type=FileType.fromFile(file);
+    LitematicaSchematic schematic=LitematicaSchematic.createFromFile(file.getParent(),file.getFileName().toString(),type);
 
-            this.schematics.add(schematic);
+    if(schematic!=null) {
+      this.schematics.add(schematic);
+    }
+
+    return schematic;
+  }
+
+  public void addSchematic(LitematicaSchematic schematic,boolean allowDuplicates) {
+    if(allowDuplicates||this.schematics.contains(schematic)==false) {
+      if(allowDuplicates==false&&schematic.getFile()!=null) {
+        for(LitematicaSchematic tmp:this.schematics) {
+          if(schematic.getFile().equals(tmp.getFile())) {
+            return;
+          }
         }
+      }
+
+      this.schematics.add(schematic);
+    }
+  }
+
+  public boolean removeSchematic(LitematicaSchematic schematic) {
+    if(this.schematics.remove(schematic)) {
+      DataManager.getSchematicPlacementManager().removeAllPlacementsOfSchematic(schematic);
+      return true;
     }
 
-    public boolean removeSchematic(LitematicaSchematic schematic)
-    {
-        if (this.schematics.remove(schematic))
-        {
-            DataManager.getSchematicPlacementManager().removeAllPlacementsOfSchematic(schematic);
-            return true;
-        }
+    return false;
+  }
 
-        return false;
-    }
-
-    public Collection<LitematicaSchematic> getAllSchematics()
-    {
-        return this.schematics;
-    }
+  public Collection<LitematicaSchematic> getAllSchematics() {
+    return this.schematics;
+  }
 }

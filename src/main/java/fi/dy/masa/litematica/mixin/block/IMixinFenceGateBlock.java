@@ -6,8 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.FenceGateBlock;
 
 @Mixin(FenceGateBlock.class)
-public interface IMixinFenceGateBlock
-{
-    @Invoker("isWall")
-    boolean litematica_invokeIsWall(BlockState state);
+public interface IMixinFenceGateBlock{
+  @Invoker("isWall")
+  boolean litematica_invokeIsWall(BlockState state);
 }

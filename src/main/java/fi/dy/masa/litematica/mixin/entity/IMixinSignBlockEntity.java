@@ -7,11 +7,10 @@ import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.block.entity.SignText;
 
 @Mixin(SignBlockEntity.class)
-public interface IMixinSignBlockEntity
-{
-    @Accessor("frontText")
-    SignText litematica_getFrontText();
+public interface IMixinSignBlockEntity{
+  @Accessor("frontText")
+  SignText litematica_getFrontText();
 
-    @Accessor("backText")
-    SignText litematica_getBackText();
+  @Accessor("backText")
+  SignText litematica_getBackText();
 }

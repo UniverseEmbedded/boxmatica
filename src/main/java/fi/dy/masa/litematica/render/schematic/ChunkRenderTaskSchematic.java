@@ -8,223 +8,190 @@ import com.google.common.primitives.Doubles;
 import net.minecraft.util.math.Vec3d;
 import fi.dy.masa.litematica.Litematica;
 
-public class ChunkRenderTaskSchematic implements Comparable<ChunkRenderTaskSchematic>
-{
-    private final ChunkRendererSchematicVbo chunkRenderer;
-    private final ChunkRenderTaskSchematic.Type type;
-    // Threaded
-    //private final ConcurrentLinkedQueue<Runnable> finishRunnables = new ConcurrentLinkedQueue<>();
-    private final List<Runnable> listFinishRunnables = Lists.newArrayList();
-    private final ReentrantLock lock = new ReentrantLock();
-    //
-    private final Supplier<Vec3d> cameraPosSupplier;
-    private final double distanceSq;
-    private BufferAllocatorCache allocatorCache;
-    private ChunkRenderDataSchematic chunkRenderData;
-    // Threaded
-    //private final AtomicReference<ChunkRenderTaskSchematic.Status> status = new AtomicReference<>(Status.PENDING);
-    private ChunkRenderTaskSchematic.Status status = ChunkRenderTaskSchematic.Status.PENDING;
-    private boolean finished;
-    //
+public class ChunkRenderTaskSchematic implements Comparable<ChunkRenderTaskSchematic>{
+  private final ChunkRendererSchematicVbo chunkRenderer;
+  private final ChunkRenderTaskSchematic.Type type;
+  // Threaded
+  //private final ConcurrentLinkedQueue<Runnable> finishRunnables = new ConcurrentLinkedQueue<>();
+  private final List<Runnable> listFinishRunnables=Lists.newArrayList();
+  private final ReentrantLock lock=new ReentrantLock();
+  //
+  private final Supplier<Vec3d> cameraPosSupplier;
+  private final double distanceSq;
+  private BufferAllocatorCache allocatorCache;
+  private ChunkRenderDataSchematic chunkRenderData;
+  // Threaded
+  //private final AtomicReference<ChunkRenderTaskSchematic.Status> status = new AtomicReference<>(Status.PENDING);
+  private ChunkRenderTaskSchematic.Status status=ChunkRenderTaskSchematic.Status.PENDING;
+  private boolean finished;
+  //
 
-    public ChunkRenderTaskSchematic(ChunkRendererSchematicVbo renderChunkIn, ChunkRenderTaskSchematic.Type typeIn, Supplier<Vec3d> cameraPosSupplier, double distanceSqIn)
-    {
-        this.chunkRenderer = renderChunkIn;
-        this.type = typeIn;
-        this.cameraPosSupplier = cameraPosSupplier;
-        this.distanceSq = distanceSqIn;
+  public ChunkRenderTaskSchematic(ChunkRendererSchematicVbo renderChunkIn,ChunkRenderTaskSchematic.Type typeIn,Supplier<Vec3d> cameraPosSupplier,double distanceSqIn) {
+    this.chunkRenderer=renderChunkIn;
+    this.type=typeIn;
+    this.cameraPosSupplier=cameraPosSupplier;
+    this.distanceSq=distanceSqIn;
+  }
+
+  public Supplier<Vec3d> getCameraPosSupplier() {
+    return this.cameraPosSupplier;
+  }
+
+  public ChunkRenderTaskSchematic.Status getStatus() {
+    //Threaded Code
+    //return this.status.get();
+    return this.status;
+  }
+
+  protected ChunkRendererSchematicVbo getRenderChunk() {
+    return this.chunkRenderer;
+  }
+
+  protected ChunkRenderDataSchematic getChunkRenderData() {
+    return this.chunkRenderData;
+  }
+
+  protected void setChunkRenderData(ChunkRenderDataSchematic chunkRenderData) {
+    if(this.chunkRenderData!=null) {
+      this.chunkRenderData.clearAll();
     }
 
-    public Supplier<Vec3d> getCameraPosSupplier()
-    {
-        return this.cameraPosSupplier;
+    this.chunkRenderData=chunkRenderData;
+  }
+
+  public BufferAllocatorCache getAllocatorCache() {
+    return this.allocatorCache;
+  }
+
+  public boolean setRegionRenderCacheBuilder(BufferAllocatorCache allocatorCache) {
+    if(allocatorCache==null) {
+      Litematica.LOGGER.error("setRegionRenderCacheBuilder() [Task] allocatorCache is null");
+      return false;
+    }
+    if(this.allocatorCache!=null&&!this.allocatorCache.isClear()) {
+      this.allocatorCache.closeAll();
     }
 
-    public ChunkRenderTaskSchematic.Status getStatus()
-    {
-        //Threaded Code
-        //return this.status.get();
-        return this.status;
+    this.allocatorCache=allocatorCache;
+    return true;
+  }
+
+  /*
+   * Threaded Code
+   * protected Status casStatus(Status expected, Status nStatus)
+   * {
+   * return status.compareAndExchange(expected, nStatus);
+   * }
+   * 
+   * protected void finish()
+   * {
+   * Status current = status.get();
+   * 
+   * if (current == Status.DONE)
+   * {
+   * return;
+   * }
+   * if (status.compareAndSet(current,Status.DONE))
+   * {
+   * Runnable runnable;
+   * while((runnable = finishRunnables.poll())!= null)
+   * {
+   * runnable.run();
+   * }
+   * }
+   * }
+   * 
+   * protected void addFinishRunnable(Runnable runnable)
+   * {
+   * if (status.get() == Status.DONE)
+   * {
+   * runnable.run();
+   * return;
+   * }
+   * finishRunnables.add(runnable);
+   * if (status.get() == Status.DONE)
+   * {
+   * runnable = finishRunnables.poll();
+   * if (runnable != null)
+   * {
+   * runnable.run();
+   * }
+   * }
+   * }
+   */
+
+  protected void setStatus(ChunkRenderTaskSchematic.Status statusIn) {
+    this.lock.lock();
+
+    try {
+      this.status=statusIn;
+    }finally {
+      this.lock.unlock();
     }
+  }
 
-    protected ChunkRendererSchematicVbo getRenderChunk()
-    {
-        return this.chunkRenderer;
+  protected void finish() {
+    this.lock.lock();
+
+    try {
+      if(this.type==ChunkRenderTaskSchematic.Type.REBUILD_CHUNK&&this.status!=ChunkRenderTaskSchematic.Status.DONE) {
+        this.chunkRenderer.setNeedsUpdate(false);
+      }
+
+      this.finished=true;
+      this.status=ChunkRenderTaskSchematic.Status.DONE;
+
+      for(Runnable runnable:this.listFinishRunnables) {
+        runnable.run();
+      }
+    }finally {
+      this.lock.unlock();
     }
+  }
 
-    protected ChunkRenderDataSchematic getChunkRenderData()
-    {
-        return this.chunkRenderData;
+  protected void addFinishRunnable(Runnable runnable) {
+    this.lock.lock();
+
+    try {
+      this.listFinishRunnables.add(runnable);
+
+      if(this.finished) {
+        runnable.run();
+      }
+    }finally {
+      this.lock.unlock();
     }
+  }
 
-    protected void setChunkRenderData(ChunkRenderDataSchematic chunkRenderData)
-    {
-        if (this.chunkRenderData != null)
-        {
-            this.chunkRenderData.clearAll();
-        }
+  public ReentrantLock getLock() {
+    return this.lock;
+  }
 
-        this.chunkRenderData = chunkRenderData;
-    }
+  protected ChunkRenderTaskSchematic.Type getType() {
+    return this.type;
+  }
 
-    public BufferAllocatorCache getAllocatorCache()
-    {
-        return this.allocatorCache;
-    }
+  protected boolean isFinished() {
+    return this.finished;
+  }
 
-    public boolean setRegionRenderCacheBuilder(BufferAllocatorCache allocatorCache)
-    {
-        if (allocatorCache == null)
-        {
-            Litematica.LOGGER.error("setRegionRenderCacheBuilder() [Task] allocatorCache is null");
-            return false;
-        }
-        if (this.allocatorCache != null && !this.allocatorCache.isClear())
-        {
-            this.allocatorCache.closeAll();
-        }
+  public int compareTo(ChunkRenderTaskSchematic other) {
+    return Doubles.compare(this.distanceSq,other.distanceSq);
+  }
 
-        this.allocatorCache = allocatorCache;
-        return true;
-    }
+  public double getDistanceSq() {
+    return this.distanceSq;
+  }
 
-    /* Threaded Code
-    protected Status casStatus(Status expected, Status nStatus)
-    {
-        return status.compareAndExchange(expected, nStatus);
-    }
+  public enum Status{
+    PENDING,
+    COMPILING,
+    UPLOADING,
+    DONE
+  }
 
-    protected void finish()
-    {
-        Status current = status.get();
-
-        if (current == Status.DONE)
-        {
-            return;
-        }
-        if (status.compareAndSet(current,Status.DONE))
-        {
-            Runnable runnable;
-            while((runnable = finishRunnables.poll())!= null)
-            {
-                runnable.run();
-            }
-        }
-    }
-
-    protected void addFinishRunnable(Runnable runnable)
-    {
-        if (status.get() == Status.DONE)
-        {
-            runnable.run();
-            return;
-        }
-        finishRunnables.add(runnable);
-        if (status.get() == Status.DONE)
-        {
-            runnable = finishRunnables.poll();
-            if (runnable != null)
-            {
-                runnable.run();
-            }
-        }
-    }
-     */
-
-    protected void setStatus(ChunkRenderTaskSchematic.Status statusIn)
-    {
-        this.lock.lock();
-
-        try
-        {
-            this.status = statusIn;
-        }
-        finally
-        {
-            this.lock.unlock();
-        }
-    }
-
-    protected void finish()
-    {
-        this.lock.lock();
-
-        try
-        {
-            if (this.type == ChunkRenderTaskSchematic.Type.REBUILD_CHUNK && this.status != ChunkRenderTaskSchematic.Status.DONE)
-            {
-                this.chunkRenderer.setNeedsUpdate(false);
-            }
-
-            this.finished = true;
-            this.status = ChunkRenderTaskSchematic.Status.DONE;
-
-            for (Runnable runnable : this.listFinishRunnables)
-            {
-                runnable.run();
-            }
-        }
-        finally
-        {
-            this.lock.unlock();
-        }
-    }
-
-    protected void addFinishRunnable(Runnable runnable)
-    {
-        this.lock.lock();
-
-        try
-        {
-            this.listFinishRunnables.add(runnable);
-
-            if (this.finished)
-            {
-                runnable.run();
-            }
-        }
-        finally
-        {
-            this.lock.unlock();
-        }
-    }
-
-    public ReentrantLock getLock()
-    {
-        return this.lock;
-    }
-
-    protected ChunkRenderTaskSchematic.Type getType()
-    {
-        return this.type;
-    }
-
-    protected boolean isFinished()
-    {
-        return this.finished;
-    }
-
-    public int compareTo(ChunkRenderTaskSchematic other)
-    {
-        return Doubles.compare(this.distanceSq, other.distanceSq);
-    }
-
-    public double getDistanceSq()
-    {
-        return this.distanceSq;
-    }
-
-    public enum Status
-    {
-        PENDING,
-        COMPILING,
-        UPLOADING,
-        DONE
-    }
-
-    public enum Type
-    {
-        REBUILD_CHUNK,
-        RESORT_TRANSPARENCY
-    }
+  public enum Type{
+    REBUILD_CHUNK,
+    RESORT_TRANSPARENCY
+  }
 }

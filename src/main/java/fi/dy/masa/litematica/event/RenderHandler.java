@@ -24,79 +24,67 @@ import fi.dy.masa.litematica.render.infohud.InfoHud;
 import fi.dy.masa.litematica.render.infohud.ToolHud;
 import fi.dy.masa.litematica.tool.ToolMode;
 
-public class RenderHandler implements IRenderer
-{
-    @Override
-    public void onRenderWorldPreWeather(Framebuffer fb, Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, Fog fog, BufferBuilderStorage buffers, Profiler profiler)
-    {
-//        MinecraftClient mc = MinecraftClient.getInstance();
-//
-//        if (Configs.Visuals.ENABLE_RENDERING.getBooleanValue() && mc.player != null)
-//        {
-//        }
+public class RenderHandler implements IRenderer{
+  @Override
+  public void onRenderWorldPreWeather(Framebuffer fb,Matrix4f posMatrix,Matrix4f projMatrix,Frustum frustum,Camera camera,Fog fog,BufferBuilderStorage buffers,Profiler profiler) {
+    //        MinecraftClient mc = MinecraftClient.getInstance();
+    //
+    //        if (Configs.Visuals.ENABLE_RENDERING.getBooleanValue() && mc.player != null)
+    //        {
+    //        }
+  }
+
+  @Override
+  public void onRenderWorldLastAdvanced(Framebuffer fb,Matrix4f posMatrix,Matrix4f projMatrix,Frustum frustum,Camera camera,Fog fog,BufferBuilderStorage buffers,Profiler profiler) {
+    MinecraftClient mc=MinecraftClient.getInstance();
+
+    if(Configs.Visuals.ENABLE_RENDERING.getBooleanValue()&&mc.player!=null) {
+      profiler.push("overlay_boxes");
+      OverlayRenderer.getInstance().renderBoxes(posMatrix,profiler);
+
+      if(Configs.InfoOverlays.VERIFIER_OVERLAY_ENABLED.getBooleanValue()) {
+        profiler.swap("overlay_mismatches");
+        OverlayRenderer.getInstance().renderSchematicVerifierMismatches(posMatrix,profiler);
+      }
+
+      if(DataManager.getToolMode()==ToolMode.REBUILD) {
+        profiler.swap("overlay_targeting");
+        OverlayRenderer.getInstance().renderSchematicRebuildTargetingOverlay(posMatrix,profiler);
+      }
+
+      // Schematic Overlay Rendering
+      profiler.swap("schematic_overlay");
+      LitematicaRenderer.getInstance().piecewiseRenderOverlay(null,null,profiler);
+      profiler.pop();
     }
+  }
 
-    @Override
-    public void onRenderWorldLastAdvanced(Framebuffer fb, Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, Fog fog, BufferBuilderStorage buffers, Profiler profiler)
-    {
-        MinecraftClient mc = MinecraftClient.getInstance();
+  @Override
+  public Supplier<String> getProfilerSectionSupplier() {
+    return ()->Reference.MOD_ID+"_render_handler";
+  }
 
-        if (Configs.Visuals.ENABLE_RENDERING.getBooleanValue() && mc.player != null)
-        {
-            profiler.push("overlay_boxes");
-            OverlayRenderer.getInstance().renderBoxes(posMatrix, profiler);
+  @Override
+  public void onRenderGameOverlayPostAdvanced(DrawContext drawContext,float partialTicks,Profiler profiler,MinecraftClient mc) {
+    if(Configs.Visuals.ENABLE_RENDERING.getBooleanValue()&&mc.player!=null) {
+      profiler.push("overlay_hud");
+      // The Info HUD renderers can decide if they want to be rendered in GUIs
+      InfoHud.getInstance().renderHud(drawContext);
 
-            if (Configs.InfoOverlays.VERIFIER_OVERLAY_ENABLED.getBooleanValue())
-            {
-                profiler.swap("overlay_mismatches");
-                OverlayRenderer.getInstance().renderSchematicVerifierMismatches(posMatrix, profiler);
-            }
-
-            if (DataManager.getToolMode() == ToolMode.REBUILD)
-            {
-                profiler.swap("overlay_targeting");
-                OverlayRenderer.getInstance().renderSchematicRebuildTargetingOverlay(posMatrix, profiler);
-            }
-
-            // Schematic Overlay Rendering
-            profiler.swap("schematic_overlay");
-            LitematicaRenderer.getInstance().piecewiseRenderOverlay(null, null, profiler);
-            profiler.pop();
+      if(GuiUtils.getCurrentScreen()==null) {
+        if(mc.options.hudHidden==false) {
+          ToolHud.getInstance().renderHud(drawContext);
+          profiler.swap("overlay_hover_info");
+          OverlayRenderer.getInstance().renderHoverInfo(mc,drawContext,profiler);
         }
-    }
 
-    @Override
-    public Supplier<String> getProfilerSectionSupplier()
-    {
-        return () -> Reference.MOD_ID+"_render_handler";
-    }
-
-    @Override
-    public void onRenderGameOverlayPostAdvanced(DrawContext drawContext, float partialTicks, Profiler profiler, MinecraftClient mc)
-    {
-        if (Configs.Visuals.ENABLE_RENDERING.getBooleanValue() && mc.player != null)
-        {
-            profiler.push("overlay_hud");
-            // The Info HUD renderers can decide if they want to be rendered in GUIs
-            InfoHud.getInstance().renderHud(drawContext);
-
-            if (GuiUtils.getCurrentScreen() == null)
-            {
-                if (mc.options.hudHidden == false)
-                {
-                    ToolHud.getInstance().renderHud(drawContext);
-                    profiler.swap("overlay_hover_info");
-                    OverlayRenderer.getInstance().renderHoverInfo(mc, drawContext, profiler);
-                }
-
-                if (GuiSchematicManager.hasPendingPreviewTask())
-                {
-                    profiler.swap("overlay_preview_frame");
-                    OverlayRenderer.getInstance().renderPreviewFrame(mc, drawContext, profiler);
-                }
-            }
-
-            profiler.pop();
+        if(GuiSchematicManager.hasPendingPreviewTask()) {
+          profiler.swap("overlay_preview_frame");
+          OverlayRenderer.getInstance().renderPreviewFrame(mc,drawContext,profiler);
         }
+      }
+
+      profiler.pop();
     }
+  }
 }

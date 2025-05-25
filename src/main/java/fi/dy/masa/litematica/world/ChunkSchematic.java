@@ -15,156 +15,131 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
-public class ChunkSchematic extends WorldChunk
-{
-    private static final BlockState AIR = Blocks.AIR.getDefaultState();
+public class ChunkSchematic extends WorldChunk{
+  private static final BlockState AIR=Blocks.AIR.getDefaultState();
 
-    private final List<Entity> entityList = new ArrayList<>();
-    private final long timeCreated;
-    private final int bottomY;
-    private final int topY;
-    private int entityCount;
-    private boolean isEmpty = true;
+  private final List<Entity> entityList=new ArrayList<>();
+  private final long timeCreated;
+  private final int bottomY;
+  private final int topY;
+  private int entityCount;
+  private boolean isEmpty=true;
 
-    public ChunkSchematic(World worldIn, ChunkPos pos)
-    {
-        super(worldIn, pos);
+  public ChunkSchematic(World worldIn,ChunkPos pos) {
+    super(worldIn,pos);
 
-        this.timeCreated = worldIn.getTime();
-        this.bottomY = worldIn.getBottomY();
-        this.topY = worldIn.getTopYInclusive();
-        this.entityCount = 0;
+    this.timeCreated=worldIn.getTime();
+    this.bottomY=worldIn.getBottomY();
+    this.topY=worldIn.getTopYInclusive();
+    this.entityCount=0;
+  }
+
+  @Override
+  public BlockState getBlockState(BlockPos pos) {
+    int x=pos.getX()&0xF;
+    int y=pos.getY();
+    int z=pos.getZ()&0xF;
+    int cy=this.getSectionIndex(y);
+    y&=0xF;
+
+    ChunkSection[] sections=this.getSectionArray();
+
+    if(cy>=0&&cy<sections.length) {
+      ChunkSection chunkSection=sections[cy];
+
+      if(!chunkSection.isEmpty()) {
+        return chunkSection.getBlockState(x,y,z);
+      }
     }
 
-    @Override
-    public BlockState getBlockState(BlockPos pos)
-    {
-        int x = pos.getX() & 0xF;
-        int y = pos.getY();
-        int z = pos.getZ() & 0xF;
-        int cy = this.getSectionIndex(y);
-        y &= 0xF;
+    return AIR;
+  }
 
-        ChunkSection[] sections = this.getSectionArray();
+  @Override
+  public BlockState setBlockState(BlockPos pos,BlockState state,int isMoving) {
+    BlockState stateOld=this.getBlockState(pos);
+    int y=pos.getY();
 
-        if (cy >= 0 && cy < sections.length)
-        {
-            ChunkSection chunkSection = sections[cy];
+    if(stateOld==state||y>=this.topY||y<this.bottomY) {
+      return null;
+    }else {
+      int x=pos.getX()&15;
+      int z=pos.getZ()&15;
+      int cy=this.getSectionIndex(y);
 
-            if (!chunkSection.isEmpty())
-            {
-                return chunkSection.getBlockState(x, y, z);
+      Block blockNew=state.getBlock();
+      Block blockOld=stateOld.getBlock();
+      ChunkSection section=this.getSectionArray()[cy];
+
+      if(section.isEmpty()&&state.isAir()) {
+        return null;
+      }
+
+      y&=0xF;
+
+      if(state.isAir()==false) {
+        this.isEmpty=false;
+      }
+
+      section.setBlockState(x,y,z,state);
+
+      if(blockOld!=blockNew) {
+        this.getWorld().removeBlockEntity(pos);
+      }
+
+      if(section.getBlockState(x,y,z).getBlock()!=blockNew) {
+        return null;
+      }else {
+        if(state.hasBlockEntity()&&blockNew instanceof BlockEntityProvider) {
+          BlockEntity te=this.getBlockEntity(pos,WorldChunk.CreationType.CHECK);
+
+          if(te==null) {
+            te=((BlockEntityProvider)blockNew).createBlockEntity(pos,state);
+
+            if(te!=null) {
+              this.getWorld().getWorldChunk(pos).setBlockEntity(te);
             }
-         }
-
-         return AIR;
-    }
-
-    @Override
-    public BlockState setBlockState(BlockPos pos, BlockState state, int isMoving)
-    {
-        BlockState stateOld = this.getBlockState(pos);
-        int y = pos.getY();
-
-        if (stateOld == state || y >= this.topY || y < this.bottomY)
-        {
-            return null;
+          }
         }
-        else
-        {
-            int x = pos.getX() & 15;
-            int z = pos.getZ() & 15;
-            int cy = this.getSectionIndex(y);
 
-            Block blockNew = state.getBlock();
-            Block blockOld = stateOld.getBlock();
-            ChunkSection section = this.getSectionArray()[cy];
+        this.needsSaving();
 
-            if (section.isEmpty() && state.isAir())
-            {
-                return null;
-            }
-
-            y &= 0xF;
-
-            if (state.isAir() == false)
-            {
-                this.isEmpty = false;
-            }
-
-            section.setBlockState(x, y, z, state);
-
-            if (blockOld != blockNew)
-            {
-                this.getWorld().removeBlockEntity(pos);
-            }
-
-            if (section.getBlockState(x, y, z).getBlock() != blockNew)
-            {
-                return null;
-            }
-            else
-            {
-                if (state.hasBlockEntity() && blockNew instanceof BlockEntityProvider)
-                {
-                    BlockEntity te = this.getBlockEntity(pos, WorldChunk.CreationType.CHECK);
-
-                    if (te == null)
-                    {
-                        te = ((BlockEntityProvider) blockNew).createBlockEntity(pos, state);
-
-                        if (te != null)
-                        {
-                            this.getWorld().getWorldChunk(pos).setBlockEntity(te);
-                        }
-                    }
-                }
-
-                this.needsSaving();
-
-                return stateOld;
-            }
-        }
+        return stateOld;
+      }
     }
+  }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void addEntity(Entity entity)
-    {
-        this.entityList.add(entity);
-        ++this.entityCount;
-    }
+  @SuppressWarnings("deprecation")
+  @Override
+  public void addEntity(Entity entity) {
+    this.entityList.add(entity);
+    ++this.entityCount;
+  }
 
-    // TODO --> MOVE TO EntityLookup
-    public List<Entity> getEntityList()
-    {
-        return this.entityList;
-    }
+  // TODO --> MOVE TO EntityLookup
+  public List<Entity> getEntityList() {
+    return this.entityList;
+  }
 
-    public int getEntityCount()
-    {
-        return this.entityCount;
-    }
+  public int getEntityCount() {
+    return this.entityCount;
+  }
 
-    public int getTileEntityCount()
-    {
-        return this.blockEntities.size();
-    }
+  public int getTileEntityCount() {
+    return this.blockEntities.size();
+  }
 
-    protected void clearEntities()
-    {
-        this.entityList.clear();
-        this.entityCount = 0;
-    }
+  protected void clearEntities() {
+    this.entityList.clear();
+    this.entityCount=0;
+  }
 
-    public long getTimeCreated()
-    {
-        return this.timeCreated;
-    }
+  public long getTimeCreated() {
+    return this.timeCreated;
+  }
 
-    @Override
-    public boolean isEmpty()
-    {
-        return this.isEmpty;
-    }
+  @Override
+  public boolean isEmpty() {
+    return this.isEmpty;
+  }
 }

@@ -13,91 +13,73 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.entity.EntityLike;
 import net.minecraft.world.entity.EntityLookup;
 
-public class SchematicEntityLookup<T extends EntityLike> implements EntityLookup<T>, AutoCloseable
-{
-    private final List<T> list;
+public class SchematicEntityLookup<T extends EntityLike> implements EntityLookup<T>,AutoCloseable{
+  private final List<T> list;
 
-    protected SchematicEntityLookup()
-    {
-        this.list = new ArrayList<>();
+  protected SchematicEntityLookup() {
+    this.list=new ArrayList<>();
+  }
+
+  protected void put(T entity) {
+    synchronized(this.list) {
+      this.list.add(entity);
+    }
+  }
+
+  protected int size() {
+    return this.list.size();
+  }
+
+  protected void remove(UUID uuid) {
+    synchronized(this.list) {
+      this.list.removeIf(e->e.getUuid().equals(uuid));
+    }
+  }
+
+  @Override
+  public @Nullable T get(int id) {
+    for(T e:this.list) {
+      if(e.getId()==id) {
+        return e;
+      }
     }
 
-    protected void put(T entity)
-    {
-        synchronized (this.list)
-        {
-            this.list.add(entity);
-        }
+    return null;
+  }
+
+  @Override
+  public @Nullable T get(UUID uuid) {
+    for(T e:this.list) {
+      if(e.getUuid().equals(uuid)) {
+        return e;
+      }
     }
 
-    protected int size()
-    {
-        return this.list.size();
-    }
+    return null;
+  }
 
-    protected void remove(UUID uuid)
-    {
-        synchronized (this.list)
-        {
-            this.list.removeIf(e -> e.getUuid().equals(uuid));
-        }
-    }
+  @Override
+  public Iterable<T> iterate() {
+    return Iterables.concat(this.list);
+  }
 
-    @Override
-    public @Nullable T get(int id)
-    {
-        for (T e : this.list)
-        {
-            if (e.getId() == id)
-            {
-                return e;
-            }
-        }
+  @Override
+  public void forEachIntersects(Box box,Consumer action) {
+    // NO-OP
+  }
 
-        return null;
-    }
+  @Override
+  public void forEachIntersects(TypeFilter filter,Box box,LazyIterationConsumer consumer) {
+    // NO-OP
+  }
 
-    @Override
-    public @Nullable T get(UUID uuid)
-    {
-        for (T e : this.list)
-        {
-            if (e.getUuid().equals(uuid))
-            {
-                return e;
-            }
-        }
+  @Override
+  public void forEach(TypeFilter filter,LazyIterationConsumer consumer) {
+    // NO-OP
+  }
 
-        return null;
-    }
-
-    @Override
-    public Iterable<T> iterate()
-    {
-        return Iterables.concat(this.list);
-    }
-
-    @Override
-    public void forEachIntersects(Box box, Consumer action)
-    {
-        // NO-OP
-    }
-
-    @Override
-    public void forEachIntersects(TypeFilter filter, Box box, LazyIterationConsumer consumer)
-    {
-        // NO-OP
-    }
-
-    @Override
-    public void forEach(TypeFilter filter, LazyIterationConsumer consumer)
-    {
-        // NO-OP
-    }
-
-    @Override
-    public void close() throws Exception
-    {
-        this.list.clear();
-    }
+  @Override
+  public void close() throws Exception {
+    this.list.clear();
+  }
 }

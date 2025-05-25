@@ -14,31 +14,29 @@ import fi.dy.masa.litematica.config.Configs;
 import fi.dy.masa.litematica.util.PlacementHandler;
 import fi.dy.masa.litematica.util.PlacementHandler.UseContext;
 
-@Mixin(value = BlockItem.class, priority = 980)
-public abstract class MixinBlockItem extends Item
-{
-    private MixinBlockItem(Item.Settings builder)
-    {
-        super(builder);
+@Mixin(value=BlockItem.class,priority=980)
+public abstract class MixinBlockItem extends Item{
+  private MixinBlockItem(Item.Settings builder) {
+    super(builder);
+  }
+
+  @Shadow
+  protected abstract BlockState getPlacementState(ItemPlacementContext context);
+  @Shadow
+  protected abstract boolean canPlace(ItemPlacementContext context,BlockState state);
+  @Shadow
+  public abstract Block getBlock();
+
+  @Inject(method="getPlacementState",at=@At("HEAD"),cancellable=true)
+  private void litematica_modifyPlacementState(ItemPlacementContext ctx,CallbackInfoReturnable<BlockState> cir) {
+    if(Configs.Generic.EASY_PLACE_MODE.getBooleanValue()&&
+      Configs.Generic.EASY_PLACE_SP_HANDLING.getBooleanValue()) {
+      BlockState stateOrig=this.getBlock().getPlacementState(ctx);
+
+      if(stateOrig!=null&&this.canPlace(ctx,stateOrig)) {
+        UseContext context=UseContext.from(ctx,ctx.getHand());
+        cir.setReturnValue(PlacementHandler.applyPlacementProtocolToPlacementState(stateOrig,context));
+      }
     }
-
-    @Shadow protected abstract BlockState getPlacementState(ItemPlacementContext context);
-    @Shadow protected abstract boolean canPlace(ItemPlacementContext context, BlockState state);
-    @Shadow public abstract Block getBlock();
-
-    @Inject(method = "getPlacementState", at = @At("HEAD"), cancellable = true)
-    private void litematica_modifyPlacementState(ItemPlacementContext ctx, CallbackInfoReturnable<BlockState> cir)
-    {
-        if (Configs.Generic.EASY_PLACE_MODE.getBooleanValue() &&
-            Configs.Generic.EASY_PLACE_SP_HANDLING.getBooleanValue())
-        {
-            BlockState stateOrig = this.getBlock().getPlacementState(ctx);
-
-            if (stateOrig != null && this.canPlace(ctx, stateOrig))
-            {
-                UseContext context = UseContext.from(ctx, ctx.getHand());
-                cir.setReturnValue(PlacementHandler.applyPlacementProtocolToPlacementState(stateOrig, context));
-            }
-        }
-    }
+  }
 }

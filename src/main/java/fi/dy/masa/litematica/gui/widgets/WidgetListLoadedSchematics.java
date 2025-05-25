@@ -13,44 +13,36 @@ import fi.dy.masa.malilib.gui.widgets.WidgetListBase;
 import fi.dy.masa.malilib.gui.widgets.WidgetSearchBar;
 import fi.dy.masa.malilib.util.FileUtils;
 
-public class WidgetListLoadedSchematics extends WidgetListBase<LitematicaSchematic, WidgetSchematicEntry>
-{
-    public WidgetListLoadedSchematics(int x, int y, int width, int height,
-            @Nullable ISelectionListener<LitematicaSchematic> selectionListener)
-    {
-        super(x, y, width, height, selectionListener);
+public class WidgetListLoadedSchematics extends WidgetListBase<LitematicaSchematic,WidgetSchematicEntry>{
+  public WidgetListLoadedSchematics(int x,int y,int width,int height,
+    @Nullable ISelectionListener<LitematicaSchematic> selectionListener) {
+    super(x,y,width,height,selectionListener);
 
-        this.browserEntryHeight = 22;
-        this.widgetSearchBar = new WidgetSearchBar(x + 2, y + 4, width - 14, 14, 0, Icons.FILE_ICON_SEARCH, LeftRight.LEFT);
-        this.browserEntriesOffsetY = this.widgetSearchBar.getHeight() + 3;
+    this.browserEntryHeight=22;
+    this.widgetSearchBar=new WidgetSearchBar(x+2,y+4,width-14,14,0,Icons.FILE_ICON_SEARCH,LeftRight.LEFT);
+    this.browserEntriesOffsetY=this.widgetSearchBar.getHeight()+3;
+  }
+
+  @Override
+  protected Collection<LitematicaSchematic> getAllEntries() {
+    return SchematicHolder.getInstance().getAllSchematics();
+  }
+
+  @Override
+  protected List<String> getEntryStringsForFilter(LitematicaSchematic entry) {
+    String metaName=entry.getMetadata().getName().toLowerCase();
+
+    if(entry.getFile()!=null) {
+      String fileName=FileUtils.getNameWithoutExtension(entry.getFile().getFileName().toString().toLowerCase());
+      return ImmutableList.of(metaName,fileName);
+    }else {
+      return ImmutableList.of(metaName);
     }
+  }
 
-    @Override
-    protected Collection<LitematicaSchematic> getAllEntries()
-    {
-        return SchematicHolder.getInstance().getAllSchematics();
-    }
-
-    @Override
-    protected List<String> getEntryStringsForFilter(LitematicaSchematic entry)
-    {
-        String metaName = entry.getMetadata().getName().toLowerCase();
-
-        if (entry.getFile() != null)
-        {
-            String fileName = FileUtils.getNameWithoutExtension(entry.getFile().getFileName().toString().toLowerCase());
-            return ImmutableList.of(metaName, fileName);
-        }
-        else
-        {
-            return ImmutableList.of(metaName);
-        }
-    }
-
-    @Override
-    protected WidgetSchematicEntry createListEntryWidget(int x, int y, int listIndex, boolean isOdd, LitematicaSchematic entry)
-    {
-        return new WidgetSchematicEntry(x, y, this.browserEntryWidth, this.getBrowserEntryHeightFor(entry),
-                isOdd, entry, listIndex, this);
-    }
+  @Override
+  protected WidgetSchematicEntry createListEntryWidget(int x,int y,int listIndex,boolean isOdd,LitematicaSchematic entry) {
+    return new WidgetSchematicEntry(x,y,this.browserEntryWidth,this.getBrowserEntryHeightFor(entry),
+      isOdd,entry,listIndex,this);
+  }
 }

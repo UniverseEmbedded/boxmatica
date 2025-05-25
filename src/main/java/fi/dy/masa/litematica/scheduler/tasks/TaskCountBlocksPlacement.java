@@ -10,63 +10,51 @@ import fi.dy.masa.litematica.schematic.placement.SubRegionPlacement.RequiredEnab
 import fi.dy.masa.litematica.selection.Box;
 import fi.dy.masa.litematica.util.BlockInfoListType;
 
-public class TaskCountBlocksPlacement extends TaskCountBlocksBase
-{
-    protected final SchematicPlacement schematicPlacement;
-    protected final boolean ignoreState;
+public class TaskCountBlocksPlacement extends TaskCountBlocksBase{
+  protected final SchematicPlacement schematicPlacement;
+  protected final boolean ignoreState;
 
-    public TaskCountBlocksPlacement(SchematicPlacement schematicPlacement, IMaterialList materialList)
-    {
-        this(schematicPlacement, materialList, false);
+  public TaskCountBlocksPlacement(SchematicPlacement schematicPlacement,IMaterialList materialList) {
+    this(schematicPlacement,materialList,false);
+  }
+
+  public TaskCountBlocksPlacement(SchematicPlacement schematicPlacement,IMaterialList materialList,boolean ignoreState) {
+    super(materialList,"litematica.gui.label.task_name.material_list");
+
+    this.schematicPlacement=schematicPlacement;
+    this.ignoreState=ignoreState;
+    Collection<Box> boxes=schematicPlacement.getSubRegionBoxes(RequiredEnabled.PLACEMENT_ENABLED).values();
+
+    // Filter/clamp the boxes to intersect with the render layer
+    if(materialList.getMaterialListType()==BlockInfoListType.RENDER_LAYERS) {
+      this.addPerChunkBoxes(boxes,DataManager.getRenderLayerRange());
+    }else {
+      this.addPerChunkBoxes(boxes);
     }
 
-    public TaskCountBlocksPlacement(SchematicPlacement schematicPlacement, IMaterialList materialList, boolean ignoreState)
-    {
-        super(materialList, "litematica.gui.label.task_name.material_list");
+  }
 
-        this.schematicPlacement = schematicPlacement;
-        this.ignoreState = ignoreState;
-        Collection<Box> boxes = schematicPlacement.getSubRegionBoxes(RequiredEnabled.PLACEMENT_ENABLED).values();
+  @Override
+  public boolean canExecute() {
+    return super.canExecute()&&this.schematicWorld!=null;
+  }
 
-        // Filter/clamp the boxes to intersect with the render layer
-        if (materialList.getMaterialListType() == BlockInfoListType.RENDER_LAYERS)
-        {
-            this.addPerChunkBoxes(boxes, DataManager.getRenderLayerRange());
-        }
-        else
-        {
-            this.addPerChunkBoxes(boxes);
-        }
+  @Override
+  protected void countAtPosition(BlockPos pos) {
+    BlockState stateSchematic=this.schematicWorld.getBlockState(pos);
 
-    }
+    if(stateSchematic.isAir()==false) {
+      BlockState stateClient=this.clientWorld.getBlockState(pos);
 
-    @Override
-    public boolean canExecute()
-    {
-        return super.canExecute() && this.schematicWorld != null;
-    }
+      this.countsTotal.addTo(stateSchematic,1);
 
-    @Override
-    protected void countAtPosition(BlockPos pos)
-    {
-        BlockState stateSchematic = this.schematicWorld.getBlockState(pos);
-
-        if (stateSchematic.isAir() == false)
-        {
-            BlockState stateClient = this.clientWorld.getBlockState(pos);
-
-            this.countsTotal.addTo(stateSchematic, 1);
-
-            if (stateClient.isAir())
-            {
-                this.countsMissing.addTo(stateSchematic, 1);
-            }
-            else if (stateClient != stateSchematic &&
-                    (this.ignoreState == false || stateClient.getBlock() != stateSchematic.getBlock()))
-            {
-                this.countsMissing.addTo(stateSchematic, 1);
-                this.countsMismatch.addTo(stateSchematic, 1);
-            }
+      if(stateClient.isAir()) {
+        this.countsMissing.addTo(stateSchematic,1);
+      }else if(stateClient!=stateSchematic&&
+        (this.ignoreState==false||stateClient.getBlock()!=stateSchematic.getBlock())) {
+          this.countsMissing.addTo(stateSchematic,1);
+          this.countsMismatch.addTo(stateSchematic,1);
         }
     }
+  }
 }

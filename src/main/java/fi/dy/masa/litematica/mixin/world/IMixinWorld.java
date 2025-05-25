@@ -7,8 +7,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.entity.EntityLookup;
 
 @Mixin(World.class)
-public interface IMixinWorld
-{
-    @Invoker("getEntityLookup")
-    EntityLookup<Entity> litematica_getEntityLookup();
+public interface IMixinWorld{
+  @Invoker("getEntityLookup")
+  EntityLookup<Entity> litematica_getEntityLookup();
 }

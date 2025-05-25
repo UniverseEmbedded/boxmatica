@@ -9,8 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(AbstractBlock.class)
-public interface IMixinAbstractBlock
-{
-    @Invoker("getPickStack")
-    ItemStack litematica_getPickStack(WorldView worldView, BlockPos blockPos, BlockState blockState, boolean bl);
+public interface IMixinAbstractBlock{
+  @Invoker("getPickStack")
+  ItemStack litematica_getPickStack(WorldView worldView,BlockPos blockPos,BlockState blockState,boolean bl);
 }

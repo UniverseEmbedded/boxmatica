@@ -9,8 +9,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 
 @Mixin(StairsBlock.class)
-public interface IMixinStairsBlock
-{
-    @Invoker("getStairShape")
-    static StairShape litematica_invokeGetStairShape(BlockState state, BlockView worldIn, BlockPos pos) { return null; }
+public interface IMixinStairsBlock{
+  @Invoker("getStairShape")
+  static StairShape litematica_invokeGetStairShape(BlockState state,BlockView worldIn,BlockPos pos) {
+    return null;
+  }
 }

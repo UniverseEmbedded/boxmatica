@@ -8,8 +8,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 
 @Mixin(VineBlock.class)
-public interface IMixinVineBlock
-{
-    @Invoker("shouldHaveSide")
-    boolean litematica_invokeShouldConnectUp(BlockView blockReader, BlockPos pos, Direction side);
+public interface IMixinVineBlock{
+  @Invoker("shouldHaveSide")
+  boolean litematica_invokeShouldConnectUp(BlockView blockReader,BlockPos pos,Direction side);
 }

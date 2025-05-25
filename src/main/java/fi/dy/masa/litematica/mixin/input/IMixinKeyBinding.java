@@ -9,8 +9,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
  * Post Re-Write code
  */
 @Mixin(KeyBinding.class)
-public interface IMixinKeyBinding
-{
-    @Accessor("boundKey")
-    InputUtil.Key litematica_getBoundKey();
+public interface IMixinKeyBinding{
+  @Accessor("boundKey")
+  InputUtil.Key litematica_getBoundKey();
 }

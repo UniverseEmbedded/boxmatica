@@ -19,40 +19,35 @@ import fi.dy.masa.litematica.world.WorldSchematic;
 import fi.dy.masa.malilib.gui.GuiBase;
 
 @Mixin(DebugHud.class)
-public abstract class MixinDebugHud
-{
-    @Inject(method = "getLeftText", at = @At("RETURN"))
-    private void litematica_addDebugLines(CallbackInfoReturnable<List<String>> cir)
-    {
-        WorldSchematic world = SchematicWorldHandler.getSchematicWorld();
+public abstract class MixinDebugHud{
+  @Inject(method="getLeftText",at=@At("RETURN"))
+  private void litematica_addDebugLines(CallbackInfoReturnable<List<String>> cir) {
+    WorldSchematic world=SchematicWorldHandler.getSchematicWorld();
 
-        if (world != null)
-        {
-            List<String> list = cir.getReturnValue();
-            Pair<String, String> pair = EntityUtils.getEntityDebug();
-            String pre = GuiBase.TXT_GOLD;
-            String rst = GuiBase.TXT_RST;
+    if(world!=null) {
+      List<String> list=cir.getReturnValue();
+      Pair<String,String> pair=EntityUtils.getEntityDebug();
+      String pre=GuiBase.TXT_GOLD;
+      String rst=GuiBase.TXT_RST;
 
-            WorldRendererSchematic renderer = LitematicaRenderer.getInstance().getWorldRenderer();
+      WorldRendererSchematic renderer=LitematicaRenderer.getInstance().getWorldRenderer();
 
-            list.add(String.format("%s[Litematica]%s %s",
-                                   pre, rst, renderer.getDebugInfoRenders()));
+      list.add(String.format("%s[Litematica]%s %s",
+        pre,rst,renderer.getDebugInfoRenders()));
 
-            String str = String.format("E: %d TE: %d C: %d, CT: %d, CV: %d",
-                                       world.getRegularEntityCount(),
-//                                       world.getEntityDebug(),
-                                       world.getChunkProvider().getTileEntityCount(),
-                                       world.getChunkProvider().getLoadedChunkCount(),
-                                       DataManager.getSchematicPlacementManager().getTouchedChunksCount(),
-                                       DataManager.getSchematicPlacementManager().getLastVisibleChunksCount()
-            );
+      String str=String.format("E: %d TE: %d C: %d, CT: %d, CV: %d",
+        world.getRegularEntityCount(),
+        //                                       world.getEntityDebug(),
+        world.getChunkProvider().getTileEntityCount(),
+        world.getChunkProvider().getLoadedChunkCount(),
+        DataManager.getSchematicPlacementManager().getTouchedChunksCount(),
+        DataManager.getSchematicPlacementManager().getLastVisibleChunksCount());
 
-            list.add(String.format("%s[Litematica]%s %s %s", pre, rst, renderer.getDebugInfoEntities(), str));
+      list.add(String.format("%s[Litematica]%s %s %s",pre,rst,renderer.getDebugInfoEntities(),str));
 
-            if (!pair.getLeft().isEmpty())
-            {
-                list.add(String.format("%s[%s]%s %s", pre, pair.getLeft(), rst, pair.getRight()));
-            }
-        }
+      if(!pair.getLeft().isEmpty()) {
+        list.add(String.format("%s[%s]%s %s",pre,pair.getLeft(),rst,pair.getRight()));
+      }
     }
+  }
 }
