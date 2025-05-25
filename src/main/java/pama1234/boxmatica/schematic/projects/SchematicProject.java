@@ -182,12 +182,12 @@ public class SchematicProject{
 
         if(fileType==FileType.UNKNOWN) {
           fileName+=BoxmaticaSchematic.FILE_EXTENSION;
-          fileType=FileType.LITEMATICA_SCHEMATIC;
+          fileType=FileType.BOXMATICA_SCHEMATIC;
         }
 
         BoxmaticaSchematic schematic=null;
 
-        if(fileType==FileType.LITEMATICA_SCHEMATIC) {
+        if(fileType==FileType.BOXMATICA_SCHEMATIC) {
           schematic=BoxmaticaSchematic.createFromFile(this.directory,fileName);
         }else if(fileType==FileType.SCHEMATICA_SCHEMATIC) {
           schematic=WorldUtils.convertSchematicaSchematicToBoxmaticaSchematic(this.directory,fileName,false,f-> {});

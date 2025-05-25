@@ -106,7 +106,7 @@ public class BoxmaticaSchematic{
   }
 
   private BoxmaticaSchematic(@Nullable Path file) {
-    this(file,FileType.LITEMATICA_SCHEMATIC);
+    this(file,FileType.BOXMATICA_SCHEMATIC);
   }
 
   private BoxmaticaSchematic(@Nullable Path file,FileType schematicType) {
@@ -219,7 +219,7 @@ public class BoxmaticaSchematic{
     schematic.metadata.setTotalBlocks(schematic.totalBlocksReadFromWorld);
     schematic.metadata.setSchematicVersion(SCHEMATIC_VERSION);
     schematic.metadata.setMinecraftDataVersion(MINECRAFT_DATA_VERSION);
-    schematic.metadata.setFileType(FileType.LITEMATICA_SCHEMATIC);
+    schematic.metadata.setFileType(FileType.BOXMATICA_SCHEMATIC);
 
     // todo testing only
     /*
@@ -262,7 +262,7 @@ public class BoxmaticaSchematic{
     schematic.metadata.setEnclosingSize(PositionUtils.getEnclosingAreaSize(boxes));
     schematic.metadata.setSchematicVersion(SCHEMATIC_VERSION);
     schematic.metadata.setMinecraftDataVersion(MINECRAFT_DATA_VERSION);
-    schematic.metadata.setFileType(FileType.LITEMATICA_SCHEMATIC);
+    schematic.metadata.setFileType(FileType.BOXMATICA_SCHEMATIC);
 
     for(Box box:boxes) {
       String regionName=box.getName();
@@ -1224,7 +1224,7 @@ public class BoxmaticaSchematic{
 
     switch(task) {
       case "Boxmatic-TransmitStart"-> {
-        FileType type=nbt.get("FileType",FileType.CODEC).orElse(FileType.LITEMATICA_SCHEMATIC);
+        FileType type=nbt.get("FileType",FileType.CODEC).orElse(FileType.BOXMATICA_SCHEMATIC);
         String name=nbt.getString("FileName","default_file");
 
         manager.createBuffer(name,type,key,nbt.getCompoundOrEmpty("PlacementData"));
@@ -1290,7 +1290,7 @@ public class BoxmaticaSchematic{
         this.metadata.readFromNBT(nbt.getCompoundOrEmpty("Metadata"));
         this.metadata.setSchematicVersion(version);
         this.metadata.setMinecraftDataVersion(minecraftDataVersion);
-        this.metadata.setFileType(FileType.LITEMATICA_SCHEMATIC);
+        this.metadata.setFileType(FileType.BOXMATICA_SCHEMATIC);
         this.readSubRegionsFromNBT(nbt.getCompoundOrEmpty("Regions"),version,minecraftDataVersion);
 
         return true;
@@ -2312,7 +2312,7 @@ public class BoxmaticaSchematic{
         }else if(schematicType==FileType.VANILLA_STRUCTURE) {
           String name=FileUtils.getNameWithoutExtension(this.schematicFile.getFileName().toString())+" (Converted Structure)";
           return this.readFromVanillaStructure(name,nbt);
-        }else if(schematicType==FileType.LITEMATICA_SCHEMATIC) {
+        }else if(schematicType==FileType.BOXMATICA_SCHEMATIC) {
           return this.readFromNBT(nbt);
         }
 
@@ -2341,7 +2341,7 @@ public class BoxmaticaSchematic{
   }
 
   public static Path fileFromDirAndName(Path dir,String fileName,FileType schematicType) {
-    if(fileName.endsWith(FILE_EXTENSION)==false&&schematicType==FileType.LITEMATICA_SCHEMATIC) {
+    if(fileName.endsWith(FILE_EXTENSION)==false&&schematicType==FileType.BOXMATICA_SCHEMATIC) {
       fileName=fileName+FILE_EXTENSION;
     }
 
@@ -2365,7 +2365,7 @@ public class BoxmaticaSchematic{
     FileType type=FileType.fromFile(file);
 
     if(type==FileType.INVALID) {
-      file=fileFromDirAndName(dir,fileName,FileType.LITEMATICA_SCHEMATIC);
+      file=fileFromDirAndName(dir,fileName,FileType.BOXMATICA_SCHEMATIC);
       type=FileType.fromFile(file);
     }
 
@@ -2377,7 +2377,7 @@ public class BoxmaticaSchematic{
 
     if(nbt!=null) {
       switch(type) {
-        case LITEMATICA_SCHEMATIC-> {
+        case BOXMATICA_SCHEMATIC-> {
           SchematicMetadata metadata=new SchematicMetadata();
 
           if(nbt.contains("Version")) {
@@ -2429,7 +2429,7 @@ public class BoxmaticaSchematic{
     FileType type=FileType.fromFile(file);
 
     if(type==FileType.INVALID) {
-      file=fileFromDirAndName(dir,fileName,FileType.LITEMATICA_SCHEMATIC);
+      file=fileFromDirAndName(dir,fileName,FileType.BOXMATICA_SCHEMATIC);
       type=FileType.fromFile(file);
     }
 
@@ -2443,7 +2443,7 @@ public class BoxmaticaSchematic{
 
     if(nbt!=null) {
       switch(type) {
-        case LITEMATICA_SCHEMATIC-> {
+        case BOXMATICA_SCHEMATIC-> {
           SchematicMetadata metadata=new SchematicMetadata();
 
           if(nbt.contains("Version")) {
@@ -2511,7 +2511,7 @@ public class BoxmaticaSchematic{
     FileType type=FileType.fromFile(file);
 
     if(type==FileType.INVALID) {
-      file=fileFromDirAndName(dir,fileName,FileType.LITEMATICA_SCHEMATIC);
+      file=fileFromDirAndName(dir,fileName,FileType.BOXMATICA_SCHEMATIC);
       type=FileType.fromFile(file);
     }
 
@@ -2523,7 +2523,7 @@ public class BoxmaticaSchematic{
 
     if(nbt!=null) {
       switch(type) {
-        case LITEMATICA_SCHEMATIC-> {
+        case BOXMATICA_SCHEMATIC-> {
           if(nbt.contains("Version")) {
             final int version=nbt.getInt("Version",-1);
             final int dataVersion=nbt.contains("MinecraftDataVersion")?nbt.getInt("MinecraftDataVersion",Configs.Generic.DATAFIXER_DEFAULT_SCHEMA.getIntegerValue()):Configs.Generic.DATAFIXER_DEFAULT_SCHEMA.getIntegerValue();
@@ -2560,7 +2560,7 @@ public class BoxmaticaSchematic{
 
   @Nullable
   public static BoxmaticaSchematic createFromFile(Path dir,String fileName) {
-    return createFromFile(dir,fileName,FileType.LITEMATICA_SCHEMATIC);
+    return createFromFile(dir,fileName,FileType.BOXMATICA_SCHEMATIC);
   }
 
   @Nullable

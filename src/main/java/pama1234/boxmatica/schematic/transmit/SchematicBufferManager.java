@@ -21,11 +21,11 @@ public class SchematicBufferManager{
   }
 
   public void createBuffer(String name,final long sessionKey) {
-    this.createBuffer(name,FileType.LITEMATICA_SCHEMATIC,sessionKey,null);
+    this.createBuffer(name,FileType.BOXMATICA_SCHEMATIC,sessionKey,null);
   }
 
   public void createBuffer(String name,final long sessionKey,@Nullable NbtCompound optional) {
-    this.createBuffer(name,FileType.LITEMATICA_SCHEMATIC,sessionKey,optional);
+    this.createBuffer(name,FileType.BOXMATICA_SCHEMATIC,sessionKey,optional);
   }
 
   public void createBuffer(String name,FileType type,final long sessionKey,@Nullable NbtCompound optional) {

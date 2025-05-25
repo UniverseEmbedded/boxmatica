@@ -80,7 +80,7 @@ public class GuiSchematicSaveExported extends GuiSchematicSaveBase{
           boolean ignoreEntities=this.gui.checkboxIgnoreEntities.isChecked();
           FileType fileType=FileType.fromFile(inDir.resolve(inFile));
 
-          if(fileType==FileType.LITEMATICA_SCHEMATIC) {
+          if(fileType==FileType.BOXMATICA_SCHEMATIC) {
             if(this.gui.exportType==ExportType.V6_LITEMATIC) {
               if(WorldUtils.convertBoxmaticaSchematicToV6BoxmaticaSchematic(inDir,inFile,dir,fileName,ignoreEntities,override,this.gui)) {
                 this.gui.addMessage(MessageType.SUCCESS,"boxmatica.message.boxmatic_downgrade_exported_as",fileName);

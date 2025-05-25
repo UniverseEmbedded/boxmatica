@@ -119,7 +119,7 @@ public enum Icons implements IGuiIcon,IFileBrowserIconProvider{
     FileType fileType=FileType.fromFile(file);
 
     return switch(fileType) {
-      case LITEMATICA_SCHEMATIC->FILE_ICON_LITEMATIC;
+      case BOXMATICA_SCHEMATIC->FILE_ICON_LITEMATIC;
       case SCHEMATICA_SCHEMATIC->FILE_ICON_SCHEMATIC;
       case VANILLA_STRUCTURE->FILE_ICON_VANILLA;
       case SPONGE_SCHEMATIC->FILE_ICON_SPONGE_SCH;

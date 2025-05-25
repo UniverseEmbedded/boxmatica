@@ -135,7 +135,7 @@ public class GuiSchematicLoad extends GuiSchematicBrowserBase{
       FileType fileType=FileType.fromFile(entry.getFullPath());
       boolean warnType=false;
 
-      if(fileType==FileType.LITEMATICA_SCHEMATIC) {
+      if(fileType==FileType.BOXMATICA_SCHEMATIC) {
         schematic=BoxmaticaSchematic.createFromFile(entry.getDirectory(),entry.getName());
       }else if(fileType==FileType.SCHEMATICA_SCHEMATIC) {
         schematic=WorldUtils.convertSchematicaSchematicToBoxmaticaSchematic(entry.getDirectory(),entry.getName(),false,this.gui);

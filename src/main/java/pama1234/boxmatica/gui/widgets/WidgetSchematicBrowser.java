@@ -172,7 +172,7 @@ public class WidgetSchematicBrowser extends WidgetFileBrowserBase{
 
       if(version!=null) {
         switch(meta.getFileType()) {
-          case LITEMATICA_SCHEMATIC-> {
+          case BOXMATICA_SCHEMATIC-> {
             str=StringUtils.translate("boxmatica.gui.label.schematic_info.version",version.boxmaticVersion());
             this.drawString(drawContext,str,x,y,textColor);
             y+=12;

@@ -77,7 +77,7 @@ public class GuiSchematicSaveImported extends GuiSchematicSaveBase{
           boolean ignoreEntities=this.gui.checkboxIgnoreEntities.isChecked();
           FileType fileType=FileType.fromFile(inDir.resolve(inFile));
 
-          if(fileType==FileType.LITEMATICA_SCHEMATIC) {
+          if(fileType==FileType.BOXMATICA_SCHEMATIC) {
             if(WorldUtils.convertBoxmaticaSchematicToBoxmaticaSchematic(inDir,inFile,dir,fileName,ignoreEntities,override,this.gui)) {
               this.gui.addMessage(MessageType.SUCCESS,"boxmatica.message.boxmatic_saved_as",fileName);
               this.gui.getListWidget().refreshEntries();

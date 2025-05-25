@@ -16,7 +16,7 @@ public class SchematicBuffer implements AutoCloseable{
   private final HashMap<Integer,Slice> buffer;
 
   public SchematicBuffer(String name) {
-    this(name,FileType.LITEMATICA_SCHEMATIC);
+    this(name,FileType.BOXMATICA_SCHEMATIC);
   }
 
   public SchematicBuffer(String name,FileType type) {

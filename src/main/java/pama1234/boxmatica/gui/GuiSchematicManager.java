@@ -72,7 +72,7 @@ public class GuiSchematicManager extends GuiSchematicBrowserBase implements ISel
     if(selected!=null) {
       FileType type=FileType.fromFile(selected.getFullPath());
 
-      if(type==FileType.LITEMATICA_SCHEMATIC) {
+      if(type==FileType.BOXMATICA_SCHEMATIC) {
         x=this.createButton(x,y,ButtonListener.Type.RENAME_SCHEMATIC);
         x=this.createButton(x,y,ButtonListener.Type.SET_PREVIEW);
         x=this.createButton(x,y,ButtonListener.Type.EXPORT_SCHEMATIC);
@@ -192,7 +192,7 @@ public class GuiSchematicManager extends GuiSchematicBrowserBase implements ISel
       FileType fileType=FileType.fromFile(entry.getFullPath());
 
       if(this.type==Type.EXPORT_SCHEMATIC) {
-        if(fileType==FileType.LITEMATICA_SCHEMATIC) {
+        if(fileType==FileType.BOXMATICA_SCHEMATIC) {
           GuiSchematicSaveExported gui=new GuiSchematicSaveExported(entry.getType(),entry.getDirectory(),entry.getName(),this.gui.exportType);
           gui.setParent(this.gui);
           GuiBase.openGui(gui);
@@ -200,7 +200,7 @@ public class GuiSchematicManager extends GuiSchematicBrowserBase implements ISel
           this.gui.addMessage(MessageType.ERROR,"boxmatica.error.schematic_manager.schematic_export.unsupported_type",file.getFileName());
         }
       }else if(this.type==Type.IMPORT_SCHEMATIC) {
-        if(fileType==FileType.LITEMATICA_SCHEMATIC||
+        if(fileType==FileType.BOXMATICA_SCHEMATIC||
           fileType==FileType.SPONGE_SCHEMATIC||
           fileType==FileType.SCHEMATICA_SCHEMATIC||
           fileType==FileType.VANILLA_STRUCTURE) {
@@ -218,7 +218,7 @@ public class GuiSchematicManager extends GuiSchematicBrowserBase implements ISel
         FileDeleter deleter=new FileDeleter(entry.getFullPath());
         GuiBase.openGui(new GuiConfirmAction(400,"boxmatica.gui.title.confirm_file_deletion",deleter,this.gui,"boxmatica.gui.message.confirm_file_deletion",entry.getName()));
       }else if(this.type==Type.SET_PREVIEW) {
-        if(GuiBase.isShiftDown()&&GuiBase.isCtrlDown()&&GuiBase.isAltDown()&&fileType==FileType.LITEMATICA_SCHEMATIC) {
+        if(GuiBase.isShiftDown()&&GuiBase.isCtrlDown()&&GuiBase.isAltDown()&&fileType==FileType.BOXMATICA_SCHEMATIC) {
           Path imageFile=entry.getDirectory().resolve("thumb.png");
 
           if(Files.exists(imageFile)&&Files.isReadable(imageFile)) {

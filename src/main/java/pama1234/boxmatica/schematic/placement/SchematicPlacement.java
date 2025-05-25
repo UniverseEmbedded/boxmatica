@@ -940,7 +940,7 @@ public class SchematicPlacement{
 
   public static @Nullable SchematicPlacement createFromNbt(NbtCompound nbt) {
     String name=nbt.getString("Name","?");
-    BoxmaticaSchematic schematic=new BoxmaticaSchematic(Path.of(name),nbt.getCompoundOrEmpty("Schematics"),FileType.LITEMATICA_SCHEMATIC);
+    BoxmaticaSchematic schematic=new BoxmaticaSchematic(Path.of(name),nbt.getCompoundOrEmpty("Schematics"),FileType.BOXMATICA_SCHEMATIC);
     BlockPos origin=NbtUtils.readBlockPosFromArrayTag(nbt,"Origin");
     BlockRotation rot=BlockRotation.values()[nbt.getInt("Rotation",0)];
     BlockMirror mirror=BlockMirror.values()[nbt.getInt("Mirror",0)];

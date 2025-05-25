@@ -157,7 +157,7 @@ public class WorldUtils{
     IStringConsumer feedback) {
     DataFixerMode oldMode=(DataFixerMode)Configs.Generic.DATAFIXER_MODE.getOptionListValue();
     Configs.Generic.DATAFIXER_MODE.setOptionListValue(DataFixerMode.ALWAYS);
-    BoxmaticaSchematic newSchematic=BoxmaticaSchematic.createFromFile(inputDir,inputFileName,FileType.LITEMATICA_SCHEMATIC);
+    BoxmaticaSchematic newSchematic=BoxmaticaSchematic.createFromFile(inputDir,inputFileName,FileType.BOXMATICA_SCHEMATIC);
 
     if(newSchematic==null) {
       feedback.setString("boxmatica.error.schematic_conversion.boxmatic_to_boxmatica.failed_to_read_boxmatic");
@@ -350,7 +350,7 @@ public class WorldUtils{
 
   public static boolean convertBoxmaticaSchematicToV6BoxmaticaSchematic(
     Path inputDir,String inputFileName,Path outputDir,String outputFileName,boolean ignoreEntities,boolean override,IStringConsumer feedback) {
-    BoxmaticaSchematic v7BoxmaticaSchematic=BoxmaticaSchematic.createFromFile(inputDir,inputFileName,FileType.LITEMATICA_SCHEMATIC);
+    BoxmaticaSchematic v7BoxmaticaSchematic=BoxmaticaSchematic.createFromFile(inputDir,inputFileName,FileType.BOXMATICA_SCHEMATIC);
 
     if(v7BoxmaticaSchematic==null) {
       feedback.setString("boxmatica.error.schematic_conversion.boxmatica_to_schematic.failed_to_read_schematic");
