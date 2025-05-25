@@ -1,11 +1,11 @@
-[![](https://jitpack.io/v/sakura-ryoko/litematica.svg)](https://jitpack.io/#sakura-ryoko/litematica)
+[![](https://jitpack.io/v/sakura-ryoko/boxmatica.svg)](https://jitpack.io/#sakura-ryoko/boxmatica)
 
-Litematica
+Boxmatica
 ==============
-Litematica is a client-side Minecraft mod using LiteLoader.
+Boxmatica is a client-side Minecraft mod using LiteLoader.
 It is more or less a re-creation of or a substitute for [Schematica](https://minecraft.curseforge.com/projects/schematica),
 for players who don't want to have Forge installed.
-For compiled builds (= downloads), see http://minecraft.curseforge.com/projects/litematica
+For compiled builds (= downloads), see http://minecraft.curseforge.com/projects/boxmatica
 
 Compiling
 =========

@@ -1,0 +1,73 @@
+package pama1234.boxmatica.gui;
+
+import javax.annotation.Nullable;
+import pama1234.boxmatica.data.DataManager;
+import pama1234.boxmatica.gui.GuiMainMenu.ButtonListenerChangeMenu;
+import pama1234.boxmatica.gui.widgets.WidgetListSchematicPlacements;
+import pama1234.boxmatica.gui.widgets.WidgetSchematicPlacement;
+import pama1234.boxmatica.schematic.placement.SchematicPlacement;
+import pama1234.boxmatica.schematic.placement.SchematicPlacementManager;
+import fi.dy.masa.malilib.gui.GuiListBase;
+import fi.dy.masa.malilib.gui.button.ButtonGeneric;
+import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
+import fi.dy.masa.malilib.util.StringUtils;
+
+public class GuiSchematicPlacementsList extends GuiListBase<SchematicPlacement,WidgetSchematicPlacement,WidgetListSchematicPlacements> implements ISelectionListener<SchematicPlacement>{
+  public final SchematicPlacementManager manager;
+
+  public GuiSchematicPlacementsList() {
+    super(12,30);
+
+    this.title=StringUtils.translate("boxmatica.gui.title.manage_schematic_placements");
+    this.manager=DataManager.getSchematicPlacementManager();
+  }
+
+  @Override
+  protected int getBrowserWidth() {
+    return this.getScreenWidth()-20;
+  }
+
+  @Override
+  protected int getBrowserHeight() {
+    return this.getScreenHeight()-64;
+  }
+
+  @Override
+  public void initGui() {
+    super.initGui();
+
+    int x=12;
+    int y=this.getScreenHeight()-26;
+    int buttonWidth;
+    String label;
+    ButtonGeneric button;
+
+    ButtonListenerChangeMenu.ButtonType type=ButtonListenerChangeMenu.ButtonType.LOADED_SCHEMATICS;
+    label=StringUtils.translate(type.getLabelKey());
+    buttonWidth=this.getStringWidth(label)+30;
+    button=new ButtonGeneric(x,y,buttonWidth,20,label,type.getIcon());
+    this.addButton(button,new ButtonListenerChangeMenu(type,this.getParent()));
+
+    type=ButtonListenerChangeMenu.ButtonType.MAIN_MENU;
+    label=StringUtils.translate(type.getLabelKey());
+    buttonWidth=this.getStringWidth(label)+20;
+    x=this.getScreenWidth()-buttonWidth-10;
+    button=new ButtonGeneric(x,y,buttonWidth,20,label);
+    this.addButton(button,new ButtonListenerChangeMenu(type,this.getParent()));
+  }
+
+  @Override
+  public void onSelectionChange(@Nullable SchematicPlacement entry) {
+    this.manager.setSelectedSchematicPlacement(entry!=this.manager.getSelectedSchematicPlacement()?entry:null);
+  }
+
+  @Override
+  protected ISelectionListener<SchematicPlacement> getSelectionListener() {
+    return this;
+  }
+
+  @Override
+  protected WidgetListSchematicPlacements createListWidget(int listX,int listY) {
+    return new WidgetListSchematicPlacements(listX,listY,this.getBrowserWidth(),this.getBrowserHeight(),this);
+  }
+}
