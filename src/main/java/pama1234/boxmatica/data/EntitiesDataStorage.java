@@ -291,7 +291,7 @@ public class EntitiesDataStorage implements IClientTickHandler,IDataSyncer{
         Pair<Long,Pair<BlockEntity,NbtCompound>> pair=this.blockEntityCache.get(pos);
 
         if(nowTime-pair.getLeft()>blockTimeout||pair.getLeft()>nowTime) {
-          //                    Boxmatica.debugLog("litematicEntityCache: be at pos [{}] has timed out by [{}] ms", pos.toShortString(), blockTimeout);
+          //                    Boxmatica.debugLog("boxmaticEntityCache: be at pos [{}] has timed out by [{}] ms", pos.toShortString(), blockTimeout);
           this.blockEntityCache.remove(pos);
         }else {
           count++;
@@ -310,7 +310,7 @@ public class EntitiesDataStorage implements IClientTickHandler,IDataSyncer{
         Pair<Long,Pair<Entity,NbtCompound>> pair=this.entityCache.get(entityId);
 
         if(nowTime-pair.getLeft()>entityTimeout||pair.getLeft()>nowTime) {
-          //                    Boxmatica.debugLog("litematicEntityCache: entity Id [{}] has timed out by [{}] ms", entityId, entityTimeout);
+          //                    Boxmatica.debugLog("boxmaticEntityCache: entity Id [{}] has timed out by [{}] ms", entityId, entityTimeout);
           this.entityCache.remove(entityId);
         }else {
           count++;

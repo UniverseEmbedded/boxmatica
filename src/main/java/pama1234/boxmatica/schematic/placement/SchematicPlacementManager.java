@@ -722,10 +722,10 @@ public class SchematicPlacementManager{
   }
 
   // Attempt to slice the schematic if oversized, and transmit it as a file.
-  private void sliceForServux(BoxmaticaSchematic litematic,NbtCompound nbt,final int maxSize,boolean printMessage) {
+  private void sliceForServux(BoxmaticaSchematic boxmatic,NbtCompound nbt,final int maxSize,boolean printMessage) {
     final long sessionKey=Random.create(Util.getMeasuringTimeMs()).nextLong();
     nbt.remove("Schematics");
-    litematic.sendTransmitFile(nbt,sessionKey,printMessage);
+    boxmatic.sendTransmitFile(nbt,sessionKey,printMessage);
   }
 
   public void clear() {

@@ -431,7 +431,7 @@ public class SchematicConversionMaps{
     }
   }
 
-  // Fix missing "id" tags.  This seems to be an issue with 1.19.x litematics.
+  // Fix missing "id" tags.  This seems to be an issue with 1.19.x boxmatics.
   public static NbtCompound checkForIdTag(NbtCompound tags) {
     if(tags.contains("id")) {
       return tags;
@@ -502,7 +502,7 @@ public class SchematicConversionMaps{
     return tags;
   }
 
-  // Fix null 'tag' entries.  This seems to be an issue with 1.19.x litematics.
+  // Fix null 'tag' entries.  This seems to be an issue with 1.19.x boxmatics.
   private static NbtList fixItemsTag(NbtList items) {
     NbtList newList=new NbtList();
 

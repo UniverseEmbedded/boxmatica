@@ -73,7 +73,7 @@ import pama1234.boxmatica.util.*;
 import pama1234.boxmatica.world.SchematicWorldHandler;
 
 public class BoxmaticaSchematic{
-  public static final String FILE_EXTENSION=".litematic";
+  public static final String FILE_EXTENSION=".boxmatic";
   public static final int SCHEMATIC_VERSION_1_13_2=5;
   public static final int MINECRAFT_DATA_VERSION_1_12=1139; // MC 1.12
   public static final int MINECRAFT_DATA_VERSION_1_13_2=1631; // MC 1.13.2

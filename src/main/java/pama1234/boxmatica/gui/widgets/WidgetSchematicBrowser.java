@@ -173,12 +173,12 @@ public class WidgetSchematicBrowser extends WidgetFileBrowserBase{
       if(version!=null) {
         switch(meta.getFileType()) {
           case LITEMATICA_SCHEMATIC-> {
-            str=StringUtils.translate("boxmatica.gui.label.schematic_info.version",version.litematicVersion());
+            str=StringUtils.translate("boxmatica.gui.label.schematic_info.version",version.boxmaticVersion());
             this.drawString(drawContext,str,x,y,textColor);
             y+=12;
           }
           case SPONGE_SCHEMATIC-> {
-            str=StringUtils.translate("boxmatica.gui.label.schematic_info.sponge_version",version.litematicVersion());
+            str=StringUtils.translate("boxmatica.gui.label.schematic_info.sponge_version",version.boxmaticVersion());
             this.drawString(drawContext,str,x,y,textColor);
             y+=12;
           }
@@ -328,7 +328,7 @@ public class WidgetSchematicBrowser extends WidgetFileBrowserBase{
     public boolean accept(Path pathName) {
       String name=pathName.getFileName().toString();
 
-      return name.endsWith(".litematic")||
+      return name.endsWith(".boxmatic")||
         name.endsWith(".schem")||
         name.endsWith(".schematic")||
         name.endsWith(".nbt");

@@ -38,7 +38,7 @@ public abstract class ServuxBoxmaticaHandler<T extends CustomPayload> implements
     return INSTANCE;
   }
 
-  public static final Identifier CHANNEL_ID=Identifier.of("servux","litematics");
+  public static final Identifier CHANNEL_ID=Identifier.of("servux","boxmatics");
 
   private boolean servuxRegistered;
   private boolean payloadRegistered=false;
@@ -117,7 +117,7 @@ public abstract class ServuxBoxmaticaHandler<T extends CustomPayload> implements
         Pair<BoxmaticaSchematic,NbtCompound> schemPair=BoxmaticaSchematic.receiveFileTransmit(nbt);
 
         if(schemPair!=null&&schemPair.getLeft().getFile()!=null) {
-          Boxmatica.LOGGER.info("handleBulkData(): Received litematic '{}' from the server",schemPair.getLeft().getFile().toAbsolutePath().toString());
+          Boxmatica.LOGGER.info("handleBulkData(): Received boxmatic '{}' from the server",schemPair.getLeft().getFile().toAbsolutePath().toString());
 
           SchematicPlacement placement=SchematicPlacement.createFromNbt(schemPair.getLeft(),schemPair.getRight());
 

@@ -20,7 +20,7 @@ public enum FileType implements StringIdentifiable{
   public static final ImmutableList<FileType> VALUES=ImmutableList.copyOf(values());
 
   public static FileType fromName(String fileName) {
-    if(fileName.endsWith(".litematic")) {
+    if(fileName.endsWith(".boxmatic")) {
       return LITEMATICA_SCHEMATIC;
     }else if(fileName.endsWith(".schematic")) {
       return SCHEMATICA_SCHEMATIC;
@@ -54,7 +54,7 @@ public enum FileType implements StringIdentifiable{
 
   public static String getFileExt(FileType type) {
     return switch(type) {
-      case LITEMATICA_SCHEMATIC->".litematic";
+      case LITEMATICA_SCHEMATIC->".boxmatic";
       case SCHEMATICA_SCHEMATIC->".schematic";
       case SPONGE_SCHEMATIC->".schem";
       case VANILLA_STRUCTURE->".nbt";
@@ -66,7 +66,7 @@ public enum FileType implements StringIdentifiable{
 
   public static String getString(FileType type) {
     return switch(type) {
-      case LITEMATICA_SCHEMATIC->"litematic";
+      case LITEMATICA_SCHEMATIC->"boxmatic";
       case SCHEMATICA_SCHEMATIC->"schematic";
       case SPONGE_SCHEMATIC->"sponge";
       case VANILLA_STRUCTURE->"vanilla_nbt";

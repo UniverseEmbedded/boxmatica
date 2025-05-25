@@ -117,7 +117,7 @@ public class WorldUtils{
     BoxmaticaSchematic newSchem=BoxmaticaSchematic.createFromWorld(world,area,info,"?",feedback);
 
     if(newSchem==null) {
-      feedback.setString("boxmatica.error.schematic_conversion.sponge_to_boxmatica.failed_to_create_litematic");
+      feedback.setString("boxmatica.error.schematic_conversion.sponge_to_boxmatica.failed_to_create_boxmatic");
       Configs.Generic.DATAFIXER_MODE.setOptionListValue(oldMode);
       return false;
     }
@@ -160,7 +160,7 @@ public class WorldUtils{
     BoxmaticaSchematic newSchematic=BoxmaticaSchematic.createFromFile(inputDir,inputFileName,FileType.LITEMATICA_SCHEMATIC);
 
     if(newSchematic==null) {
-      feedback.setString("boxmatica.error.schematic_conversion.litematic_to_boxmatica.failed_to_read_litematic");
+      feedback.setString("boxmatica.error.schematic_conversion.boxmatic_to_boxmatica.failed_to_read_boxmatic");
       Configs.Generic.DATAFIXER_MODE.setOptionListValue(oldMode);
       return null;
     }
@@ -273,7 +273,7 @@ public class WorldUtils{
     BoxmaticaSchematic newSchem=BoxmaticaSchematic.createFromWorld(world,area,info,"?",feedback);
 
     if(newSchem==null) {
-      feedback.setString("boxmatica.error.schematic_conversion.structure_to_boxmatica.failed_to_create_litematic");
+      feedback.setString("boxmatica.error.schematic_conversion.structure_to_boxmatica.failed_to_create_boxmatic");
       Configs.Generic.DATAFIXER_MODE.setOptionListValue(oldMode);
       return false;
     }
@@ -363,7 +363,7 @@ public class WorldUtils{
     if(v6BoxmaticaSchematic.writeToFile(outputDir,outputFileName,override,true)) {
       return true;
     }else {
-      feedback.setString("boxmatica.error.schematic_conversion.boxmatica_to_schematic.failed_to_downgrade_litematic");
+      feedback.setString("boxmatica.error.schematic_conversion.boxmatica_to_schematic.failed_to_downgrade_boxmatic");
       return false;
     }
   }
